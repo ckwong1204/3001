@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+</head>
+
+<button type="button" onclick="$('table').remove()"> Clear Table</button>
+<select id="stockCode" onclick="onclick_stockCode()">
+  <option value="HSI" selected>HSI</option>
+  <option value="A50-02823">A50-02823</option>
+</select>
+
+<form>
+  <input type="text" size="6" id="date"   value="170908" list="dateList"> <datalist id="dateList"></datalist>
+  <input type="text" size="2" id="year"   value="17">
+  <input type="text" size="2" id="month"  value="9">
+  <input type="text" size="6" id="strike" value="26600" list="strikeList"> <datalist id="strikeList"></datalist>
+
+  <button type="button" onclick="init('get_hsio_csv','C')">C</button>
+  <button type="button" onclick="init('get_hsio_csv','P')">P</button>
+  <button type="button" onclick="init('get_hsio_csv', null)"> both </button>
+</form><br>
+
+<div id='outputtable'>
+</div>
+
+<br><button type="button" onclick="$('#link').toggle()"> Show More:  </button>
+<!--- hidden context ________________________________ -->    
+<div id="link" hidden> 
+    <div>excel function:
+    <input type="text" size="1" id="excel_row"   value="80">
+    <button type="button" onclick="init('calc_3001')"> 3001 excel </button>
+    </div>
+
+  <button type="button" onclick="init('get_hsio_json')"> json_console </button>
+  <button id="button2">button2</button><br>
+
+  <a href="https://script.google.com/macros/s/AKfycbz9UGqubdHFUBaLt9Awsa057aFVPowQU6DOs9gXbbzC/dev?a=get">
+     https://script.google.com/macros/s/AKfycbz9UGqubdHFUBaLt9Awsa057aFVPowQU6DOs9gXbbzC/dev?a=get
+  </a><br>
+  https://script.google.com/macros/s/AKfycbz9UGqubdHFUBaLt9Awsa057aFVPowQU6DOs9gXbbzC/exec?a=get2<br>
+  https://script.google.com/macros/s/AKfycbz9UGqubdHFUBaLt9Awsa057aFVPowQU6DOs9gXbbzC/dev?a=get&callback=callback<br>
+
+  <br><textarea rows="4" style="width:  calc(100vw - 20px);">
+  var result = {};
+  google.script.run.withFailureHandler(function(err) {console.log(err);}).withSuccessHandler(function(response) {
+      console.log(JSON.stringify(response)); console.log(response); result=response; 
+  }).get_hsio_csv(170908, 17, "" , 26600, "P"); 
+  </textarea>
+
+  <br><textarea rows="4" style="width:  calc(100vw - 20px);">
+  $.getJSON('https://script.google.com/macros/s/AKfycbz9UGqubdHFUBaLt9Awsa057aFVPowQU6DOs9gXbbzC/dev?a=get2&callback=?', function(json){
+      console.log("---",json)
+  })
+  </textarea>
+</div>
+<!--- style ________________________________ --> 
+
+<style>
+table {
+    border-collapse: collapse;
+}
+
+table, td, th {
+    border: 1px solid black;
+}
+</style>
+
+<!--- script ________________________________ --> 
+<script>
+var CommonData ={};
+
+function get_hsio_json() {
+  console.log("get_hsio_json");
+  var date = $('#date').val();
+  var year = $('#year').val();
+  var month = $('#month').val();
+  var strike = $('#strike').val();
+  var C_P = '.'; //$('#C_P').val();
+
+  result = {};
+  google.script.run.withFailureHandler(function(err) { console.log(err); }).withSuccessHandler(function(response) {
+    console.log(JSON.stringify(response));
+    console.log(response);
+    result = response;
+  }).get_hsio_json(date, [{ year: year, month: month, strike: strike, C_P: C_P } ]);
+}
+
+// work after publish as API
+function link() {
+  console.log('button2');
+  $.getJSON('https://script.google.com/macros/s/AKfycbz9UGqubdHFUBaLt9Awsa057aFVPowQU6DOs9gXbbzC/dev?a=get2&callback=?', function(json) {
+    console.log("---", json)
+  });
+}
+
+function get_hsio_csv(C_P) {
+  console.log("get_hsio_csv");
+  var date = $('#date').val();
+  var year = $('#year').val();
+  var month = $('#month').val();
+  var strike = $('#strike').val();
+  if(C_P == null ) { C_P = '.' }
+
+  result = {};
+  google.script.run.withFailureHandler(function(err) { console.log(err); }).withSuccessHandler(function(response) {
+    console.log(JSON.stringify(response));
+    console.log(response);
+    result = response;
+    addCsvAsTableToPage(response)
+  }).get_hsio_csv(date, year, month, strike, C_P);
+}
+
+function get_dqe_csv(C_P) {
+  console.log("get_dqe_csv");
+  var stockCode = $('#stockCode').val().substr(0,3);
+  var date = $('#date').val();
+  var year = $('#year').val();
+  var month = $('#month').val();
+  var strike = $('#strike').val();
+  if(C_P == null ) { C_P = '.' }
+
+  result = {};
+  google.script.run.withFailureHandler(function(err) { console.log(err); }).withSuccessHandler(function(response) {
+    console.log(JSON.stringify(response));
+    console.log(response);
+    result = response;
+    addCsvAsTableToPage(response)
+  }).get_dqe_csv(stockCode, date, year, month, strike, C_P);
+}
+
+function calc_3001() {
+  console.log("calc_3001");
+  var excel_row = $('#excel_row').val();
+
+  result = {};
+  google.script.run.withFailureHandler(function(err) { console.log(err); }).withSuccessHandler(function(response) {
+    console.log(response);
+  }).calc_3001(excel_row);
+}
+
+function init(a,b) {
+  var stockCode = $('#stockCode').val();
+  if (stockCode == 'HSI' && a == 'get_hsio_csv')    { get_hsio_csv(b); }
+  if (stockCode != 'HSI' && a == 'get_hsio_csv')    { get_dqe_csv(b); }
+  if (a == 'get_hsio_json')   { get_hsio_json(); }
+  if (a == 'calc_3001')       { calc_3001();    }
+  if (a == 'link')            { link();    }
+}
+
+$('document').ready(function() {
+  google.script.run.withFailureHandler(function(err) {console.log(err);}).withSuccessHandler(function(response) {
+    console.log("CommonData got"); 
+    CommonData = response;
+    updateStrickPrice('HSI');
+
+    CommonData.stockList.forEach(function(i){ $('#stockCode').append("<option value='"+i+"'>"+i+"</option>") });  //<option value="A50-02823">A50-02823</option>
+    //update update picker
+    CommonData.DateList .forEach(function(i){ $('#dateList').append("<option value='"+i+"'>"+i+"</option>") });
+    $('#date').val(CommonData.DateList[CommonData.DateList.length-1])
+    
+  }).getCommonData();
+
+});
+
+function updateStrickPrice(stockCode) {
+  console.log(stockCode)
+  $('#strike').val('');
+  $strikeList = $('#strikeList').html("");
+
+  if (stockCode == 'HSI') {
+    CommonData.StrikePrice            .forEach(function(i){ $strikeList.append("<option value='"+i+"'>") });
+    $('#strike').val('26000');
+  }
+  else if (CommonData.stockstrikes[stockCode]){
+    CommonData.stockstrikes[stockCode].forEach(function(i){ $strikeList.append("<option value='"+i+"'>") });
+  }
+}
+
+function onclick_stockCode(){
+  var stockCode = $('#stockCode').val()
+  updateStrickPrice(stockCode);
+}
+
+function addCsvAsTableToPage(data) {
+  var lines = data.split("\n"),
+    output = [],
+    i;
+  for (i = 0; i < lines.length; i++)
+    output.push("<tr><td>" +
+      lines[i].slice(0, -1).split(",").join("</td><td>") +
+      "</td></tr>");
+  output = "<table>" + output.join("") + "</table>";
+  $('#outputtable').append(output)
+}
+</script>
