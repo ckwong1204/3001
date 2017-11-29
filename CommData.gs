@@ -85,7 +85,7 @@ function updateDateList(){
   })
 }
 //triggered daily
-function addDateList_test(){ addDateList ("171233")}
+function addDateList_test(){ addDateList ("171129")}
 function addDateList(date){
   var sheet = SpreadsheetApp.openById('1urOweWT8JMU2JWJy2gHCvXt-vGHkb5LSS16nWG79FEc').getSheetByName('date');
   
@@ -95,7 +95,15 @@ function addDateList(date){
   var list_str = rangeList.getValue();
   list_str += "" + ( list_str == "" ? "":",") + date;
   rangeList.setValue(list_str);
+  
+  //update  "Last Transaction Date"
+  sheet.getRange('D2').setValue(date);
+  
   return true;
+}
+function getLastTransactionDate(){
+  var sheet = SpreadsheetApp.openById('1urOweWT8JMU2JWJy2gHCvXt-vGHkb5LSS16nWG79FEc').getSheetByName('date');
+  var a= sheet.getRange('D2').getValue();
 }
 function findTargetRow(date, sheet){
   try{
@@ -130,15 +138,17 @@ function getContractYearMonth_test(date){
 function getContractYearMonths(date){
   var sheet = SpreadsheetApp.openById('1urOweWT8JMU2JWJy2gHCvXt-vGHkb5LSS16nWG79FEc').getSheetByName('date');
   var target_row = findTargetRow(date, sheet);
-  var rangeList = sheet.getRange('A' + target_row + ':A'+ (target_row +1) );
-  var list_str = rangeList.getValues(); //[["2017-11"], ["2017-12"]]
+  var rangeList = sheet.getRange('A' + target_row + ':A'+ (target_row +2) );
+  var list_str = rangeList.getValues(); //[["2017-11"], ["2017-12"], ["2018-01"]]
   
-  var str_curr = list_str[0][0];
-  var str_next = list_str[1][0];
+  var str_curr  = list_str[0][0];
+  var str_next  = list_str[1][0];
+  var str_next2 = list_str[2][0];
   
   var contracts = {
-    curr: { year: str_curr.substr(2,2), month: str_curr.substr(5,2) },
-    next: { year: str_next.substr(2,2), month: str_next.substr(5,2) }
+    curr:  { year: str_curr.substr(2,2),  month: str_curr.substr(5,2)  },
+    next:  { year: str_next.substr(2,2),  month: str_next.substr(5,2)  },
+    next2: { year: str_next2.substr(2,2), month: str_next2.substr(5,2) }
   };
   
   return contracts;
