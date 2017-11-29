@@ -36,14 +36,26 @@ function getEmail() {
 function onOpen() {
   var dialogMenu = SpreadsheetApp.getUi() // Or DocumentApp or FormApp.
       .createMenu('Dialog');
-  dialogMenu.addItem('Open', 'openDialog').addToUi();
-//  dialogMenu.addItem('Open', 'openDialog').addToUi();
+  dialogMenu.addItem('Open', 'openDialog')
+            .addItem('Update 3001', 'update3001excel').addToUi();
 }
 
 function openDialog() {
   var html = HtmlService.createHtmlOutputFromFile('Index');
   SpreadsheetApp.getUi() // Or DocumentApp or FormApp.
       .showModalDialog(html, 'Dialog title');
+}
+
+function update3001excel(){
+  var range = SpreadsheetApp.getActiveRange();
+  var row_1st = range.getRow();
+  var row_end = range.getLastRow();
+  
+  for (var i = row_1st; i <= row_end; i++){
+    calc_DailyReport_openDialog(i);
+  }
+  
+  SpreadsheetApp.getUi().alert(     'update3001excel: updated from row '+row_1st+' to ' + row_end     );
 }
 //menu ----------------------------------------------------------------------
 

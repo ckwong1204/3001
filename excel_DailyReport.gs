@@ -3,6 +3,15 @@ function calc_DailyReport_test ( row, date ){
   init_DailyReport(5, '171122');
   calc_DailyReport(5, '171122');
 }
+function calc_DailyReport_openDialog_test (){ calc_DailyReport_openDialog ( 8 )}
+
+function calc_DailyReport_openDialog ( row ){ 
+  var sheet = SpreadsheetApp.openById('1urOweWT8JMU2JWJy2gHCvXt-vGHkb5LSS16nWG79FEc').getSheetByName('DailyReport');
+  var date = sheet.getRange('B'+row).getValue();
+  if(!date){  date = getLastTransactionDate(); }   
+  init_DailyReport(row, date);
+  calc_DailyReport(row, date);
+}
 
 /**
  * get calc_DailyReport
@@ -51,10 +60,6 @@ function calc_DailyReport ( row, date ){
 
 function init_DailyReport ( row, date ){
   var sheet = SpreadsheetApp.openById('1urOweWT8JMU2JWJy2gHCvXt-vGHkb5LSS16nWG79FEc').getSheetByName('DailyReport');
-  var rangeList = sheet.getRange('B2:G2');
-  var formularList = rangeList.getFormulasR1C1();
-  Logger.log(formularList);
-  
   /*1 B "交易日"      */ sheet.getRange('B'+row).setValue(date);
   
   var rangeList = sheet.getRange('C'+row+':G'+row);

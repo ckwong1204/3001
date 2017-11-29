@@ -103,7 +103,7 @@ function addDateList(date){
 }
 function getLastTransactionDate(){
   var sheet = SpreadsheetApp.openById('1urOweWT8JMU2JWJy2gHCvXt-vGHkb5LSS16nWG79FEc').getSheetByName('date');
-  var a= sheet.getRange('D2').getValue();
+  return sheet.getRange('D2').getValue();
 }
 function findTargetRow(date, sheet){
   try{
