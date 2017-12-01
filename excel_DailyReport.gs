@@ -27,30 +27,30 @@ function calc_DailyReport ( row, date ){
     var rangeList = sheet.getRange('A'+row+':H'+row);
     var valueList = rangeList.getValues()[0];    
     var date        = valueList[1]; // B: 交易日 yymmdd
-    var strike_curr = valueList[5]; // E: 即月 ATM 行使價:
-    var strike_next = valueList[6]; // F: 下月 ATM 行使價:
+    var strike = valueList[5]; // E: 即月 ATM 行使價:
+//    var strike_next = valueList[6]; // F: 下月 ATM 行使價:
     
     var contract = getContractYearMonths(date);
-    var contracts = [{ year: contract.curr.year,  month: contract.curr.month,  strike: strike_curr, C_P: '.' },
-                     { year: contract.next.year,  month: contract.next.month,  strike: strike_next, C_P: '.' },
-                     { year: contract.next2.year, month: contract.next2.month, strike: strike_next, C_P: '.' }];
+    var contracts = [{ year: contract.curr.year,  month: contract.curr.month,  strike: strike, C_P: '.' },
+                     { year: contract.next.year,  month: contract.next.month,  strike: strike, C_P: '.' },
+                     { year: contract.next2.year, month: contract.next2.month, strike: strike, C_P: '.' }];
 
 
-    var Curr_C_str  = '-' + CommonData.Month[contract.curr.month]  + "-" + contract.curr.year  + "-" + strike_curr + "-" + "C";
-    var Curr_P_str  = '-' + CommonData.Month[contract.curr.month]  + "-" + contract.curr.year  + "-" + strike_curr + "-" + "P";
-    var Next_C_str  = '-' + CommonData.Month[contract.next.month]  + "-" + contract.next.year  + "-" + strike_next + "-" + "C";
-    var Next_P_str  = '-' + CommonData.Month[contract.next.month]  + "-" + contract.next.year  + "-" + strike_next + "-" + "P";
-    var Next2_C_str = '-' + CommonData.Month[contract.next2.month] + "-" + contract.next2.year + "-" + strike_next + "-" + "C";
-    var Next2_P_str = '-' + CommonData.Month[contract.next2.month] + "-" + contract.next2.year + "-" + strike_next + "-" + "P";
+    var Curr_C_str  = '-' + CommonData.Month[contract.curr.month]  + "-" + contract.curr.year  + "-" + strike + "-" + "C";
+    var Curr_P_str  = '-' + CommonData.Month[contract.curr.month]  + "-" + contract.curr.year  + "-" + strike + "-" + "P";
+    var Next_C_str  = '-' + CommonData.Month[contract.next.month]  + "-" + contract.next.year  + "-" + strike + "-" + "C";
+    var Next_P_str  = '-' + CommonData.Month[contract.next.month]  + "-" + contract.next.year  + "-" + strike + "-" + "P";
+    var Next2_C_str = '-' + CommonData.Month[contract.next2.month] + "-" + contract.next2.year + "-" + strike + "-" + "C";
+    var Next2_P_str = '-' + CommonData.Month[contract.next2.month] + "-" + contract.next2.year + "-" + strike + "-" + "P";
     
     var data = get_hsio_json(date, contracts);
     if(get_hsio_json){
-      sheet.getRange('H'+row).setValue( data[ date + Curr_C_str  ].OQP_CLOSE ); // H: 交易日 即月 Call    date + CommonData.Month[contract_curr.month]  + "-" + contract_curr.year  + "-" + strike_curr + "-" + "C"
-      sheet.getRange('I'+row).setValue( data[ date + Curr_P_str  ].OQP_CLOSE ); // I: 交易日 即月 Put     date + CommonData.Month[contract_curr.month]  + "-" + contract_curr.year  + "-" + strike_curr + "-" + "P"
-      sheet.getRange('J'+row).setValue( data[ date + Next_C_str  ].OQP_CLOSE ); // J: 交易日 下月 Call    date + CommonData.Month[contract_next.month]  + "-" + contract_next.year  + "-" + strike_next + "-" + "C"
-      sheet.getRange('K'+row).setValue( data[ date + Next_P_str  ].OQP_CLOSE ); // K: 交易日 下月 Put     date + CommonData.Month[contract_next.month]  + "-" + contract_next.year  + "-" + strike_next + "-" + "P" 
-      sheet.getRange('L'+row).setValue( data[ date + Next2_C_str ].OQP_CLOSE ); // J: 交易日 下下月 Call  date + CommonData.Month[contract_next2.month] + "-" + contract_next2.year + "-" + strike_next + "-" + "C"
-      sheet.getRange('M'+row).setValue( data[ date + Next2_P_str ].OQP_CLOSE ); // K: 交易日 下下月 Put   date + CommonData.Month[contract_next2.month] + "-" + contract_next2.year + "-" + strike_next + "-" + "P" 
+      sheet.getRange('H'+row).setValue( data[ date + Curr_C_str  ].OQP_CLOSE ); // H: 交易日 即月 Call    date + CommonData.Month[contract_curr.month]  + "-" + contract_curr.year  + "-" + strike + "-" + "C"
+      sheet.getRange('I'+row).setValue( data[ date + Curr_P_str  ].OQP_CLOSE ); // I: 交易日 即月 Put     date + CommonData.Month[contract_curr.month]  + "-" + contract_curr.year  + "-" + strike + "-" + "P"
+      sheet.getRange('J'+row).setValue( data[ date + Next_C_str  ].OQP_CLOSE ); // J: 交易日 下月 Call    date + CommonData.Month[contract_next.month]  + "-" + contract_next.year  + "-" + strike + "-" + "C"
+      sheet.getRange('K'+row).setValue( data[ date + Next_P_str  ].OQP_CLOSE ); // K: 交易日 下月 Put     date + CommonData.Month[contract_next.month]  + "-" + contract_next.year  + "-" + strike + "-" + "P" 
+      sheet.getRange('L'+row).setValue( data[ date + Next2_C_str ].OQP_CLOSE ); // J: 交易日 下下月 Call  date + CommonData.Month[contract_next2.month] + "-" + contract_next2.year + "-" + strike + "-" + "C"
+      sheet.getRange('M'+row).setValue( data[ date + Next2_P_str ].OQP_CLOSE ); // K: 交易日 下下月 Put   date + CommonData.Month[contract_next2.month] + "-" + contract_next2.year + "-" + strike + "-" + "P" 
       sheet.getRange('W'+row).setValue( "from " + date + " "+ new Date().toLocaleString("en-US", {timeZone: "Asia/Hong_Kong"}));
     }
     
@@ -68,7 +68,7 @@ function init_DailyReport ( row, date ){
   /*3  B: 即月 HSIF:      */ formulaR1C1List[1] = "=VLOOKUP(R[0]C[-2],HSIF!C1:C15,7,FALSE)" ;
   /*4  D: 下月 HSIF:      */ formulaR1C1List[2] = "=VLOOKUP(R[0]C[-3],HSIF!C1:C15,13,FALSE)" ;
   /*5  E: 即月 ATM 行使價: */ formulaR1C1List[3] = "=getClosestStrikePrice(R[0]C[-2])" ;
-  /*6  F: 下月 ATM 行使價: */ formulaR1C1List[4] = "=getClosestStrikePrice(R[0]C[-2])";
+//  /*6  F: 下月 ATM 行使價: */ formulaR1C1List[4] = "=getClosestStrikePrice(R[0]C[-2])";
   rangeList.setFormulasR1C1([formulaR1C1List]);
 }
 

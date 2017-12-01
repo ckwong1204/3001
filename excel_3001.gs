@@ -17,7 +17,7 @@ function formular_test(){
 
 function DailyMartketReport_triger_test(){
   //  calc_3001(80);
-  DailyMartketReport_triger('171006');
+  DailyMartketReport_triger('171130');
 }
 function calc_3001_today_test(date){ calc_3001_today('171124'); }
 // test ------------------------------------------------------------------
@@ -118,25 +118,23 @@ function calc_3001 ( row, date){
     var strike_curr = valueList[6]; // G: 即月 行使價
     var strike_next = valueList[7]; // H: 下月 行使價
     
-    var contract_curr = getCurrMonth(date_end);
-    var contract_next = getNextMonth(date_end);
-    var contracts = [{ year: contract_curr.year, month: contract_curr.month, strike: strike_curr, C_P: '.' },
-                     { year: contract_next.year, month: contract_next.month, strike: strike_next, C_P: '.' }];
+    var contract = getContractYearMonths(date);
+    var contracts = [{ year: contract.curr.year,  month: contract.curr.month,  strike: strike_curr, C_P: '.' },
+                     { year: contract.next.year,  month: contract.next.month,  strike: strike_next, C_P: '.' }];
 
-
-    var Curr_C_str = '-' + CommonData.Month[contract_curr.month] + "-" + contract_curr.year + "-" + strike_curr + "-" + "C";
-    var Curr_P_str = '-' + CommonData.Month[contract_curr.month] + "-" + contract_curr.year + "-" + strike_curr + "-" + "P";
-    var Next_C_str = '-' + CommonData.Month[contract_next.month] + "-" + contract_next.year + "-" + strike_next + "-" + "C";
-    var Next_P_str = '-' + CommonData.Month[contract_next.month] + "-" + contract_next.year + "-" + strike_next + "-" + "P";
+    var Curr_C_str = '-' + CommonData.Month[contract.curr.month] + "-" + contract.curr.year + "-" + strike_curr + "-" + "C";
+    var Curr_P_str = '-' + CommonData.Month[contract.curr.month] + "-" + contract.curr.year + "-" + strike_curr + "-" + "P";
+    var Next_C_str = '-' + CommonData.Month[contract.next.month] + "-" + contract.next.year + "-" + strike_next + "-" + "C";
+    var Next_P_str = '-' + CommonData.Month[contract.next.month] + "-" + contract.next.year + "-" + strike_next + "-" + "P";
     
     
     if (date_1st  <=  today_yymmdd) { // if current Date >= 第一交易日
       var data_1st = get_hsio_json(date_1st, contracts);
       if(get_hsio_json){
-        sheet.getRange('I'+row).setValue( data_1st[ date_1st + Curr_C_str ].OQP_CLOSE ); // I: 1st交易日 即月 Call  date_1st + CommonData.Month[contract_curr.month] + "-" + contract_curr.year + "-" + strike_curr + "-" + "C"
-        sheet.getRange('K'+row).setValue( data_1st[ date_1st + Curr_P_str ].OQP_CLOSE ); // K: 1st交易日 即月 Put   date_1st + CommonData.Month[contract_curr.month] + "-" + contract_curr.year + "-" + strike_curr + "-" + "P"
-        sheet.getRange('M'+row).setValue( data_1st[ date_1st + Next_C_str ].OQP_CLOSE ); // M: 1st交易日 下月 Call  date_1st + CommonData.Month[contract_next.month] + "-" + contract_next.year + "-" + strike_next + "-" + "C"
-        sheet.getRange('O'+row).setValue( data_1st[ date_1st + Next_P_str ].OQP_CLOSE ); // O: 1st交易日 下月 Put   date_1st + CommonData.Month[contract_next.month] + "-" + contract_next.year + "-" + strike_next + "-" + "P"      
+        sheet.getRange('I'+row).setValue( data_1st[ date_1st + Curr_C_str ].OQP_CLOSE ); // I: 1st交易日 即月 Call  date_1st + CommonData.Month[contract.curr.month] + "-" + contract.curr.year + "-" + strike_curr + "-" + "C"
+        sheet.getRange('K'+row).setValue( data_1st[ date_1st + Curr_P_str ].OQP_CLOSE ); // K: 1st交易日 即月 Put   date_1st + CommonData.Month[contract.curr.month] + "-" + contract.curr.year + "-" + strike_curr + "-" + "P"
+        sheet.getRange('M'+row).setValue( data_1st[ date_1st + Next_C_str ].OQP_CLOSE ); // M: 1st交易日 下月 Call  date_1st + CommonData.Month[contract.next.month] + "-" + contract.next.year + "-" + strike_next + "-" + "C"
+        sheet.getRange('O'+row).setValue( data_1st[ date_1st + Next_P_str ].OQP_CLOSE ); // O: 1st交易日 下月 Put   date_1st + CommonData.Month[contract.next.month] + "-" + contract.next.year + "-" + strike_next + "-" + "P"      
         sheet.getRange('W'+row).setValue( "from " + date_1st + " "+ new Date().toLocaleString("en-US", {timeZone: "Asia/Hong_Kong"}));
       }
     }
@@ -150,8 +148,8 @@ function calc_3001 ( row, date){
       if(data_after_1stday){
         sheet.getRange('J'+row).setValue( data_after_1stday[ dataDate + Curr_C_str ].OQP_CLOSE ); /* J "結算日 即月 Call"               */
         sheet.getRange('L'+row).setValue( data_after_1stday[ dataDate + Curr_P_str ].OQP_CLOSE ); /* L "結算日 即月 Put"                */
-        sheet.getRange('N'+row).setValue( data_after_1stday[ dataDate + Next_C_str ].OQP_CLOSE ); // N: 結算日    下月 Call  date_end   + CommonData.Month[contract_next.month] + "-" + contract_next.year + "-" + strike_next + "-" + "C"
-        sheet.getRange('P'+row).setValue( data_after_1stday[ dataDate + Next_P_str ].OQP_CLOSE ); // P: 結算日    下月 Put   date_end   + CommonData.Month[contract_next.month] + "-" + contract_next.year + "-" + strike_next + "-" + "P"
+        sheet.getRange('N'+row).setValue( data_after_1stday[ dataDate + Next_C_str ].OQP_CLOSE ); // N: 結算日    下月 Call  date_end   + CommonData.Month[contract.next.month] + "-" + contract.next.year + "-" + strike_next + "-" + "C"
+        sheet.getRange('P'+row).setValue( data_after_1stday[ dataDate + Next_P_str ].OQP_CLOSE ); // P: 結算日    下月 Put   date_end   + CommonData.Month[contract.next.month] + "-" + contract.next.year + "-" + strike_next + "-" + "P"
         sheet.getRange('W'+row).setValue( "from " + dataDate + " "+ new Date().toLocaleString("en-US", {timeZone: "Asia/Hong_Kong"}));
         
         setFormulas_3001_endDay(sheet, row, dataDate)
@@ -159,22 +157,6 @@ function calc_3001 ( row, date){
     }
   } catch (e) { errorLog(e); return "failed" + e.message + ";" + e.fileName + "(" + e.lineNumber + ")"}
   return "success";
-}
-
-function getCurrMonth(date){
-  return { year: Number(date.substr(0,2)),
-          month: Number(date.substr(2,2))
-  }
-}
-
-function getNextMonth(date){
-//  var month1 = date.substr(2,2) ; 
-  var month = Number(date.substr(2,2)) + 1 ; 
-  var year  = Number(date.substr(0,2)); 
-  
-  return { year: (month > 12 ? year + 1: year),
-          month: month
-  }
 }
 
 function getDate(date_diff){

@@ -79,6 +79,28 @@ function uploadFile(url) {
   }
 }
 
+function loopURL(){
+  var date = getDate(0);
+ 
+  var url = "https://www.hkex.com.hk/eng/stat/dmstat/dayrpt/hsio"+date+".zip";
+  var isSuccess = false;
+  
+  while(!isSuccess){
+    try{
+      var file_Blob = UrlFetchApp.fetch(url).getBlob();
+      Logger.log('Url success' + file_Blob.getName());
+      isSuccess = true;
+    }catch(e){
+      var msg = 'get url fail: "%s"' + url;
+      Logger.log(msg);
+      logError( msg, 'AutoDownDaily', '98')
+      Utilities.sleep(10 * 60 * 1000);
+    }
+  }
+  logError( 'Url success: ' + file_Blob.getName() , 'AutoDownDaily', '100')
+  sendEmail(date);
+}
+
 //---=---=---=---=---=---=---=---=---=---=---=---=---=
 
 function sendEmail(date){
