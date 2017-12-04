@@ -135,7 +135,10 @@ function getContractYearMonth_test(date){
   var a = getContractYearMonth('170101')  
   Logger.log(a);
 }
-function getContractYearMonths(date){
+function getContractYearMonth_currStr(date){
+  return getContractYearMonths_json(date, true);
+}  
+function getContractYearMonths_json(date, isCurrStr){
   var sheet = SpreadsheetApp.openById('1urOweWT8JMU2JWJy2gHCvXt-vGHkb5LSS16nWG79FEc').getSheetByName('date');
   var target_row = findTargetRow(date, sheet);
   var rangeList = sheet.getRange('A' + target_row + ':A'+ (target_row +2) );
@@ -144,6 +147,8 @@ function getContractYearMonths(date){
   var str_curr  = list_str[0][0];
   var str_next  = list_str[1][0];
   var str_next2 = list_str[2][0];
+  
+  if(isCurrStr) {return str_curr;}
   
   var contracts = {
     curr:  { year: str_curr.substr(2,2),  month: str_curr.substr(5,2)  },

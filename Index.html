@@ -102,6 +102,7 @@ function get_hsio_csv(C_P) {
   var month = $('#month').val();
   var strike = $('#strike').val();
   if(C_P == null ) { C_P = '.' }
+  console.log("get_hsio_csv" +','+ date +','+ year +','+ month +','+ strike +','+ C_P);
 
   result = {};
   google.script.run.withFailureHandler(function(err) { console.log(err); }).withSuccessHandler(function(response) {
@@ -120,7 +121,8 @@ function get_dqe_csv(C_P) {
   var month = $('#month').val();
   var strike = $('#strike').val();
   if(C_P == null ) { C_P = '.' }
-
+  console.log("get_dqe_csv" +','+ stockCode +','+ date +','+ year +','+ month +','+ strike +','+ C_P);
+  
   result = {};
   google.script.run.withFailureHandler(function(err) { console.log(err); }).withSuccessHandler(function(response) {
     console.log(JSON.stringify(response));
@@ -165,17 +167,17 @@ $('document').ready(function() {
 });
 
 function updateStrickPrice(stockCode) {
-  console.log(stockCode)
+  console.log('updateStrickPrice - ' + stockCode)
   $('#strike').val('');
   $strikeList = $('#strikeList').html("");
 
   if (stockCode == 'HSI') {
     CommonData.StrikePrice            .forEach(function(i){ $strikeList.append("<option value='"+i+"'>") });
-    $('#strike').val('26000');
   }
   else if (CommonData.stockstrikes[stockCode]){
     CommonData.stockstrikes[stockCode].forEach(function(i){ $strikeList.append("<option value='"+i+"'>") });
   }
+  $('#strike').val('.*');
 }
 
 function onclick_stockCode(){

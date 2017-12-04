@@ -5,7 +5,7 @@
 
 function calc_3001_test(){
 //  calc_3001(80);
-  calc_3001(101);
+  calc_3001(2, "171201");
 }
 
 function formular_test(){
@@ -17,7 +17,7 @@ function formular_test(){
 
 function DailyMartketReport_triger_test(){
   //  calc_3001(80);
-  DailyMartketReport_triger('171130');
+  DailyMartketReport_triger('171129');
 }
 function calc_3001_today_test(date){ calc_3001_today('171124'); }
 // test ------------------------------------------------------------------
@@ -25,7 +25,7 @@ function calc_3001_today_test(date){ calc_3001_today('171124'); }
 // update the data in row 2 for today's record
 function calc_3001_today(date){
   calc_3001(2, date);
-  //send email
+  //send email    
 }
 
 //triggered daily
@@ -118,7 +118,7 @@ function calc_3001 ( row, date){
     var strike_curr = valueList[6]; // G: 即月 行使價
     var strike_next = valueList[7]; // H: 下月 行使價
     
-    var contract = getContractYearMonths(date);
+    var contract = getContractYearMonths_json(date);
     var contracts = [{ year: contract.curr.year,  month: contract.curr.month,  strike: strike_curr, C_P: '.' },
                      { year: contract.next.year,  month: contract.next.month,  strike: strike_next, C_P: '.' }];
 
@@ -146,13 +146,18 @@ function calc_3001 ( row, date){
       
       var data_after_1stday = get_hsio_json(dataDate, contracts);
       if(data_after_1stday){
-        sheet.getRange('J'+row).setValue( data_after_1stday[ dataDate + Curr_C_str ].OQP_CLOSE ); /* J "結算日 即月 Call"               */
-        sheet.getRange('L'+row).setValue( data_after_1stday[ dataDate + Curr_P_str ].OQP_CLOSE ); /* L "結算日 即月 Put"                */
+        if (dataDate == date_end) {
+          setFormulas_3001_endDay(sheet, row, dataDate);
+        } else {
+          sheet.getRange('J'+row).setValue( data_after_1stday[ dataDate + Curr_C_str ].OQP_CLOSE ); /* J "結算日 即月 Call"               */
+          sheet.getRange('L'+row).setValue( data_after_1stday[ dataDate + Curr_P_str ].OQP_CLOSE ); /* L "結算日 即月 Put"                */
+        }
         sheet.getRange('N'+row).setValue( data_after_1stday[ dataDate + Next_C_str ].OQP_CLOSE ); // N: 結算日    下月 Call  date_end   + CommonData.Month[contract.next.month] + "-" + contract.next.year + "-" + strike_next + "-" + "C"
         sheet.getRange('P'+row).setValue( data_after_1stday[ dataDate + Next_P_str ].OQP_CLOSE ); // P: 結算日    下月 Put   date_end   + CommonData.Month[contract.next.month] + "-" + contract.next.year + "-" + strike_next + "-" + "P"
         sheet.getRange('W'+row).setValue( "from " + dataDate + " "+ new Date().toLocaleString("en-US", {timeZone: "Asia/Hong_Kong"}));
         
-        setFormulas_3001_endDay(sheet, row, dataDate)
+        
+        setFormulas_3001_beforeEndDay(sheet, row, dataDate);
       }
     }
   } catch (e) { errorLog(e); return "failed" + e.message + ";" + e.fileName + "(" + e.lineNumber + ")"}
@@ -192,9 +197,11 @@ function setFormulas_3001_1stDay(sheet, row, dataDate){
 }
 
 function setFormulas_3001_endDay(sheet, row, dataDate){
-  ///* J "結算日 即月 Call"              */   sheet.getRange('J'+row).setFormula("=IF(R[0]C[7]>R[0]C[-3],R[0]C[7]-R[0]C[-3],0)");
-  ///* L "結算日 即月 Put"               */   sheet.getRange('L'+row).setFormula("=IF(R[0]C[5]<R[0]C[-5],R[0]C[-5]-R[0]C[5],0)");
-  
+/* J "結算日 即月 Call"              */   sheet.getRange('J'+row).setFormula("=IF(R[0]C[7]>R[0]C[-3],R[0]C[7]-R[0]C[-3],0)");
+/* L "結算日 即月 Put"               */   sheet.getRange('L'+row).setFormula("=IF(R[0]C[5]<R[0]C[-5],R[0]C[-5]-R[0]C[5],0)");
+}
+
+function setFormulas_3001_beforeEndDay(sheet, row, dataDate){
   var rangeList = sheet.getRange('Q'+row+':V'+row);
   var formulaR1C1List = [];
   /* Q "結算日 即月 HSIF"                */   formulaR1C1List[0] = "=VLOOKUP(R[0]C[-14],HSIF!C1:C15,7,FALSE)";
