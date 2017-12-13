@@ -105,6 +105,28 @@ function get_hsio_json(date, contracts) {
   return null;
 }
 
+function get_hsif_csv_test() {
+ var a = get_hsif_csv('171207');
+  Logger.log('171207');
+}
+
+/**
+ * get HSIF
+ */
+function get_hsif_csv(date) {
+  var fileName = 'hsif' + date + '.zip';  //// hsif171207.zip
+  var headerRegex = "\"Contract Month\",\".*";
+  ////DEC-17,.*
+  var dataRegex = "\n...\-..\,.*";
+
+  return searchFile(fileName, date, headerRegex, dataRegex);
+}
+
+function get_hsif_json(date) {
+  var hsif_csv = get_hsif_csv(date);
+  return csvJSON(hsif_csv);
+}
+
 // seach file in folder   /////////////////////////////////////////////
 //fileName = 'hsio' + date + '.zip'
 //headerRegex = CONTRACT MONTH.*
@@ -132,8 +154,9 @@ function searchFile(fileName, date, headerRegex, dataRegex, stockCodeRegex) { //
       if(list){
         //merge header and data tgt
         var csvFormat_str = "date," +listheader[0].replace(/[^A-Za-z ,/]/g, "").replace(/[ /]/g, "_");
+            csvFormat_str = handleDuplicateCSVHeader(csvFormat_str);
         list.forEach(function(item) {
-          csvFormat_str += "\n" +date +','+ item;
+          csvFormat_str += "\n" +date +','+ item.replace(/[\n/]/g, "");
         })
       }
       // Logger.log("\n\n" + SearchKey_regex+ "\n"+csvFormat_str);
@@ -182,4 +205,14 @@ function csvJSON(csv) {
     };
   }
   return result; //JavaScript object
+}
+
+function handleDuplicateCSVHeader(header){
+  var counts = {};
+  var newHeader = "";
+  header.split(",").forEach(function(x) { 
+    counts[x] = (counts[x] || 0)+1; 
+    newHeader += (newHeader == "" ? "": ",") + x  + ( counts[x] == 1 ? "" : "_" + counts[x] );
+  });
+  return newHeader;
 }
