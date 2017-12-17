@@ -114,12 +114,28 @@ function get_hsif_csv_test() {
  * get HSIF
  */
 function get_hsif_csv(date) {
-  var fileName = 'hsif' + date + '.zip';  //// hsif171207.zip
-  var headerRegex = "\"Contract Month\",\".*";
-  ////DEC-17,.*
-  var dataRegex = "\n...\-..\,.*";
-
-  return searchFile(fileName, date, headerRegex, dataRegex);
+  try {
+    var fileName = 'hsif' + date + '.zip';  //// hsif171207.zip
+    var headerRegex = "\"Contract Month\",\".*";
+    ////DEC-17,.*
+    var dataRegex = "\n...\-..\,.*";
+    
+    var csv = searchFile(fileName, date, headerRegex, dataRegex);
+  
+    //deal with header
+    var rows = csv.split('\n')
+    var oldHeader = rows[0].split(',');
+    var newHeader = [];
+    for (var i = 0; i < oldHeader.length ; i ++){
+      if     (i <= 1)  newHeader.push( oldHeader[i]);
+      else if(i <= 6)  newHeader.push( "night_"+oldHeader[i]);
+      else if(i <= 12) newHeader.push( "day_"+oldHeader[i]);
+      else             newHeader.push( "combined_"+oldHeader[i]);
+    }
+    rows[0] = newHeader.join(',');
+    
+    return rows.join('\n');
+  } catch (e) { errorLog(e); return null;}
 }
 
 function get_hsif_json(date) {
@@ -154,7 +170,6 @@ function searchFile(fileName, date, headerRegex, dataRegex, stockCodeRegex) { //
       if(list){
         //merge header and data tgt
         var csvFormat_str = "date," +listheader[0].replace(/[^A-Za-z ,/]/g, "").replace(/[ /]/g, "_");
-            csvFormat_str = handleDuplicateCSVHeader(csvFormat_str);
         list.forEach(function(item) {
           csvFormat_str += "\n" +date +','+ item.replace(/[\n/]/g, "");
         })
@@ -207,6 +222,8 @@ function csvJSON(csv) {
   return result; //JavaScript object
 }
 
+
+////// unused function
 function handleDuplicateCSVHeader(header){
   var counts = {};
   var newHeader = "";
@@ -216,3 +233,27 @@ function handleDuplicateCSVHeader(header){
   });
   return newHeader;
 }
+
+
+/***** hsif
+night_date
+night_Contract_Month
+night_Open_Price
+night_Daily_High
+night_Daily_Low
+night_Close_Price
+night_Volume
+day_Open_Price
+day_Daily_High
+day_Daily_Low
+day_Volume
+day_Settlement_Price
+day_Change_in_Settlement_Price
+combined_Contract_High
+combined_Contract_Low
+combined_Volume
+combined_Open_Interest
+combined_Change_in_O
+*****/
+
+

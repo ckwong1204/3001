@@ -55,6 +55,7 @@ function run_downloadMarketData() {
 
   if (is_DailyMartketReport_triger){ 
     addDateList(date);
+    HSIF.addExcel_trigger(date);
     DailyMartketReport_triger(date); 
     DailyReport_Trigger();
   }

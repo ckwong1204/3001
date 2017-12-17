@@ -35,7 +35,7 @@ function getEmail() {
 // Use this code for Google Docs, Forms, or new Sheets.
 function onOpen() {
   var dialogMenu = SpreadsheetApp.getUi() // Or DocumentApp or FormApp.
-      .createMenu('Dialog');
+      .createMenu('Script');
   dialogMenu.addItem('Open', 'openDialog')
             .addItem('Update 3001', 'update3001excel').addToUi();
 }
