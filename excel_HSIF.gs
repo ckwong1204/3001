@@ -3,11 +3,12 @@ function run(){
 }
 
 var HSIF = {
-  sheet: SpreadsheetApp.openById('1urOweWT8JMU2JWJy2gHCvXt-vGHkb5LSS16nWG79FEc').getSheetByName('HSIF'),
+  //this cause error
+//  sheet: SpreadsheetApp.openById('1urOweWT8JMU2JWJy2gHCvXt-vGHkb5LSS16nWG79FEc').getSheetByName('HSIF'),
   
   addExcel_trigger: function(date) {
-    var sheet = this.sheet;
-//    var sheet = SpreadsheetApp.openById('1urOweWT8JMU2JWJy2gHCvXt-vGHkb5LSS16nWG79FEc').getSheetByName('HSIF');
+//    var sheet = this.sheet;
+    var sheet = SpreadsheetApp.openById('1urOweWT8JMU2JWJy2gHCvXt-vGHkb5LSS16nWG79FEc').getSheetByName('HSIF');
     var newRow = sheet.getLastRow() + 1;
     var rangeList = sheet.getRange("C"+newRow+":O"+newRow);
     var valuesList = [];
@@ -29,6 +30,8 @@ var HSIF = {
     valuesList[12] = json[1].day_Volume;				// O	Volumn
     
     rangeList.setValues([valuesList]);
+    
+    sheet.getRange("A"+newRow).setValue(date);
   }
 }
 

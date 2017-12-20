@@ -1,7 +1,7 @@
 //---= ManualDownload  ---=---=---=---=---=---=---=---=---=---=---=---=
 function manualDownload() {
-  var start = '171101';
-  var end ='171101';
+  var start = '171217';
+  var end ='171217';
   
   var date = start;
   
@@ -44,7 +44,7 @@ function get_HKEX_Url(hkexType, date){
 
 // download Market Data - Daily Market Report
 function run_downloadMarketData() {
-  var date = getDate(0);
+  var date = getDate_str(0);
   var is_DailyMartketReport_triger = false;
   
 //  uploadFile(get_HKEX_Url(hkexTypeMap.stockOption, date));
@@ -89,7 +89,7 @@ function loopURL_test(){
 function loopURL(){
   var date_now = new Date();
   if (date_now.getHours() >= 19 && date_now.getHours() <= 20 ){
-    var date = getDate(0);
+    var date = getDate_str(0);
     
     var url = "https://www.hkex.com.hk/eng/stat/dmstat/dayrpt/hsio"+date+".zip";
     var isSuccess = false;
@@ -121,7 +121,7 @@ function sendEmail(date){
 //date_diff = -1 -> yesterday
 //date_diff = 0 -> today
 //date_diff = 1 -> tomorrow
-function getDate(date_diff){
+function getDate_str(date_diff){
   var d = new Date();
   d.setDate(d.getDate() + date_diff);
   
