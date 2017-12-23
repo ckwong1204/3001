@@ -32,8 +32,8 @@ function init_DailyReport ( row, date ){
   var formulaR1C1List = [];
   /*2  C 3001 IV 		 */ formulaR1C1List[0] = "=R[0]C[7]+R[0]C[8]-ABS(R[0]C[3]-R[0]C[4]) -(R[0]C[5]+R[0]C[6]-ABS(R[0]C[2]-R[0]C[4]))";
   /*3  D 下月 3001 IV	    */ formulaR1C1List[1] = "=(R[0]C[8]+R[0]C[9]-ABS(R[0]C[2]-R[0]C[3])) -(R[0]C[6]+R[0]C[7]-ABS(R[0]C[1]-R[0]C[3]))";
-  /*4  E 即月  HSIF:		*/ formulaR1C1List[2] = "=VLOOKUP(R[0]C[-3],HSIF!C1:C15,7,FALSE)";
-  /*5  F 下月  HSIF:		*/ formulaR1C1List[3] = "=VLOOKUP(R[0]C[-4],HSIF!C1:C15,13,FALSE)";
+  /*4  E 即月  HSIF:		*/ formulaR1C1List[2] = '=VLOOKUP("'+date+'",HSIF!C1:C15,7,FALSE)';
+  /*5  F 下月  HSIF:		*/ formulaR1C1List[3] = '=VLOOKUP("'+date+'",HSIF!C1:C15,13,FALSE)';
   rangeList.setFormulasR1C1([formulaR1C1List]);
 
   /*6  G ATM  行使價:	*/  
