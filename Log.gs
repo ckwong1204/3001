@@ -20,13 +20,9 @@ function errorLog(e){
 
 
 function test(){
-  var ss = SpreadsheetApp.openById('1urOweWT8JMU2JWJy2gHCvXt-vGHkb5LSS16nWG79FEc');
-  var sheet = ss.getSheetByName('3001')
+  var sheet = SpreadsheetApp.openById('1urOweWT8JMU2JWJy2gHCvXt-vGHkb5LSS16nWG79FEc').getSheetByName('Errors');
   
-  var a = sheet.getRange('A106:V106');
-  var b = a.getValues();
-  var c = a.getFormulas();
-  var d = a.getFormulasR1C1();
-//  sheet.getRange('A108:V108').setValues(b);
-  Logger.log(d);
+  var a = sheet.getRange('A1')
+  a.setValue("22222");
+  a.setNote("updated at nnnn\n122");
 }

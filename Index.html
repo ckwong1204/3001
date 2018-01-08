@@ -2,7 +2,9 @@
 <html>
 
 <head>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 </head>
 
 <button type="button" onclick="$('table').remove()"> Clear Table</button>
@@ -12,10 +14,11 @@
 </select>
 
 <form>
-  <input type="text" size="6" id="date"   value="170908" list="dateList"> <datalist id="dateList"></datalist>
+  <input type="text" size="6" id="date"   value="170908" list="dateList" oninput="oninput_date_updateYearMonth(this.value)" onchange="oninput_date_updateYearMonth(this.value)"> <datalist id="dateList"></datalist>
   <input type="text" size="2" id="year"   value="17">
   <input type="text" size="2" id="month"  value="9">
   <input type="text" size="6" id="strike" value="26600" list="strikeList"> <datalist id="strikeList"></datalist>
+  <div id="contractDiv"></div>
 
   <button type="button" onclick="init('get_hsio_csv','C')">C</button>
   <button type="button" onclick="init('get_hsio_csv','P')">P</button>
@@ -160,10 +163,12 @@ $('document').ready(function() {
     CommonData.stockList.forEach(function(i){ $('#stockCode').append("<option value='"+i+"'>"+i+"</option>") });  //<option value="A50-02823">A50-02823</option>
     //update update picker
     CommonData.DateList .forEach(function(i){ $('#dateList').append("<option value='"+i+"'>"+i+"</option>") });
-    $('#date').val(CommonData.DateList[CommonData.DateList.length-1])
+    $('#date').val(CommonData.DateList[CommonData.DateList.length-1]);
+    $('#date').change();
     
   }).getCommonData();
-
+  
+  
 });
 
 function updateStrickPrice(stockCode) {
@@ -195,5 +200,43 @@ function addCsvAsTableToPage(data) {
       "</td></tr>");
   output = "<table>" + output.join("") + "</table>";
   $('#outputtable').append(output)
+}
+
+function oninput_date_updateYearMonth(date){
+  //date: yymmdd
+  console.log(date, this);
+  if(date && typeof date == "string" && date.length == 6 ){
+    google.script.run.withFailureHandler(function(err) {
+      console.log(err);
+    }).withSuccessHandler(function(response) {
+      console.log(JSON.stringify(response)); console.log(response); result=response; 
+      var contract = response;
+      if(contract && contract.curr && contract.next && contract.next2){
+        
+        var contractList = [contract.curr.year + "-" + contract.curr.month,
+                            contract.next.year + "-" + contract.next.month,
+                            contract.next2.year + "-" + contract.next2.month];
+        var html = "";
+        contractList.forEach(function(c){
+          html += '<input type="radio" name="contract" value="'+c+'">20' + c + '</label>';
+        })
+        $('#contractDiv').html(html);
+        
+        $("#contractDiv input:radio[name=contract]").on('change', function(e) {
+//          console.log(e.type);
+//          console.log(e,a,b);
+          console.log(this);
+          var checked = $("#contractDiv input:radio[name=contract]:checked")[0];
+          var year = checked.value.split('-')[0];
+          var month = checked.value.split('-')[1];
+          
+          $('#year').val(year);
+          $('#month').val(month);
+        });
+        
+        $("#contractDiv input:radio[name=contract]")[0].click();
+      }
+    }).getContractYearMonths_json(date);
+  }
 }
 </script>

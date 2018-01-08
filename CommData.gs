@@ -10,7 +10,6 @@ function getDateList(){
   var list = list_str.split(',')
   return list;
 }
-
 var CommonData = {
   Month: {
     "01": "JAN",  "JAN":"01",   1: "JAN",
@@ -85,7 +84,7 @@ function updateDateList(){
   })
 }
 //triggered daily
-function addDateList_test(){ addDateList ("171129")}
+function addDateList_test(){ addDateList ("171229")}
 function addDateList(date){
   var sheet = SpreadsheetApp.openById('1urOweWT8JMU2JWJy2gHCvXt-vGHkb5LSS16nWG79FEc').getSheetByName('date');
   
@@ -93,12 +92,14 @@ function addDateList(date){
   
   var rangeList = sheet.getRange('C' + target_row);
   var list_str = rangeList.getValue();
-  list_str += "" + ( list_str == "" ? "":",") + date;
-  rangeList.setValue(list_str);
-  
-  //update  "Last Transaction Date"
-  sheet.getRange('D2').setValue(date);
-  
+  var is_contain_date = list_str.indexOf(date) !== -1;
+  if(!is_contain_date){
+    list_str += "" + ( list_str == "" ? "":",") + date;
+    rangeList.setValue(list_str);
+    
+    //update  "Last Transaction Date"
+    sheet.getRange('D2').setValue(date);
+  }
   return true;
 }
 function getLastTransactionDate(){
@@ -159,3 +160,43 @@ function getContractYearMonths_json(date, isCurrStr){
   return contracts;
 }
 
+function getDate_Next(date){
+  try{
+    if(date && typeof date == "string" && date.length == 6 ){
+      var list = getDateList();
+      if(list)
+        return list[ list.indexOf(date) +1];
+    }
+    return "";
+  } catch (e) { errorLog(e); return "failed" + e.message + ";" + e.fileName + "(" + e.lineNumber + ")"}
+}
+
+function getDate_firstdateOfMonth_test(){ return getContractYearMonthInfo("2017-12") }
+
+function getDate_firstdateOfMonth_byDate(date){ 
+  var month = getContractYearMonth_currStr(date);
+  return getContractYearMonthInfo_byMonth(month) 
+}
+function getContractYearMonthInfo_byMonth(month){
+  try{  
+    if(month && typeof month == "string" && month.length == 7 ){ //2017-12
+      var sheet = SpreadsheetApp.openById('1urOweWT8JMU2JWJy2gHCvXt-vGHkb5LSS16nWG79FEc').getSheetByName('date');
+      var rangeList = sheet.getRange('A3:C');
+      var valuesList = rangeList.getValues(); 
+      var returnValue = {};
+      
+      valuesList.forEach(function(r){
+        if(r[0] == month){
+          returnValue.month = r[0];
+          returnValue.day_last = r[1];
+          returnValue.day_first = r[2].split(',')[0];
+          returnValue.day_list = r[2].split(',');
+        }
+      })
+      
+      return returnValue;
+    }
+//    logError(message, fileName, lineNumber);
+    return "";
+  } catch (e) { errorLog(e); return "failed" + e.message + ";" + e.fileName + "(" + e.lineNumber + ")"}
+}

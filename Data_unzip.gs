@@ -106,7 +106,7 @@ function get_hsio_json(date, contracts) {
 }
 
 function get_hsif_csv_test() {
- var a = get_hsif_csv('171207');
+ var a = get_hsif_csv('171229');
   Logger.log('171207');
 }
 
@@ -118,11 +118,14 @@ function get_hsif_csv(date) {
     var fileName = 'hsif' + date + '.zip';  //// hsif171207.zip
     var headerRegex = "\"Contract Month\",\".*";
     ////DEC-17,.*
-    var dataRegex = "\n...\-..\,.*";
+    var dataRegex = "\n...\-..\,\[\\d\-\].*";
     
     var csv = searchFile(fileName, date, headerRegex, dataRegex);
   
     //deal with header
+    if(csv == null){
+      return null;
+    }
     var rows = csv.split('\n')
     var oldHeader = rows[0].split(',');
     var newHeader = [];
@@ -135,6 +138,7 @@ function get_hsif_csv(date) {
     rows[0] = newHeader.join(',');
     
     return rows.join('\n');
+    
   } catch (e) { errorLog(e); return null;}
 }
 
@@ -205,6 +209,10 @@ function getfileByName(zipFileName) {
 
 // var csv is the CSV file with headers /////////////////////////////////////////////
 function csvJSON(csv) {
+  if(csv == null){
+    logError("csv cannot be null", "Data_unzip.gs", "function csvJSON(csv)")
+    return null;
+  }
   var lines = csv.split("\n");
   var result = [];
   var headers = lines[0].split(",");
