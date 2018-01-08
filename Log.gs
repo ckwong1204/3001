@@ -23,6 +23,5 @@ function test(){
   var sheet = SpreadsheetApp.openById('1urOweWT8JMU2JWJy2gHCvXt-vGHkb5LSS16nWG79FEc').getSheetByName('Errors');
   
   var a = sheet.getRange('A1')
-  a.setValue("22222");
-  a.setNote("updated at nnnn\n122");
+  a.setValue("1111").setNote("updated at nnnn\n1111");
 }

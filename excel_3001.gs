@@ -131,10 +131,10 @@ function calc_3001 ( row, date){
     if (date_1st  <=  today_yymmdd) { // if current Date >= 第一交易日
       var data_1st = get_hsio_json(date_1st, contracts);
       if(get_hsio_json){
-        sheet.getRange('I'+row).setValue( data_1st[ date_1st + Curr_C_str ].OQP_CLOSE ); // I: 1st交易日 即月 Call  date_1st + CommonData.Month[contract.curr.month] + "-" + contract.curr.year + "-" + strike_curr + "-" + "C"
-        sheet.getRange('K'+row).setValue( data_1st[ date_1st + Curr_P_str ].OQP_CLOSE ); // K: 1st交易日 即月 Put   date_1st + CommonData.Month[contract.curr.month] + "-" + contract.curr.year + "-" + strike_curr + "-" + "P"
-        sheet.getRange('M'+row).setValue( data_1st[ date_1st + Next_C_str ].OQP_CLOSE ); // M: 1st交易日 下月 Call  date_1st + CommonData.Month[contract.next.month] + "-" + contract.next.year + "-" + strike_next + "-" + "C"
-        sheet.getRange('O'+row).setValue( data_1st[ date_1st + Next_P_str ].OQP_CLOSE ); // O: 1st交易日 下月 Put   date_1st + CommonData.Month[contract.next.month] + "-" + contract.next.year + "-" + strike_next + "-" + "P"      
+        sheet.getRange('I'+row).setValue( data_1st[ date_1st + Curr_C_str ].OQP_CLOSE ).setNote( date_1st + Curr_C_str ); // I: 1st交易日 即月 Call  date_1st + CommonData.Month[contract.curr.month] + "-" + contract.curr.year + "-" + strike_curr + "-" + "C"
+        sheet.getRange('K'+row).setValue( data_1st[ date_1st + Curr_P_str ].OQP_CLOSE ).setNote( date_1st + Curr_P_str ); // K: 1st交易日 即月 Put   date_1st + CommonData.Month[contract.curr.month] + "-" + contract.curr.year + "-" + strike_curr + "-" + "P"
+        sheet.getRange('M'+row).setValue( data_1st[ date_1st + Next_C_str ].OQP_CLOSE ).setNote( date_1st + Next_C_str ); // M: 1st交易日 下月 Call  date_1st + CommonData.Month[contract.next.month] + "-" + contract.next.year + "-" + strike_next + "-" + "C"
+        sheet.getRange('O'+row).setValue( data_1st[ date_1st + Next_P_str ].OQP_CLOSE ).setNote( date_1st + Next_P_str ); // O: 1st交易日 下月 Put   date_1st + CommonData.Month[contract.next.month] + "-" + contract.next.year + "-" + strike_next + "-" + "P"      
         sheet.getRange('W'+row).setValue( "from " + date_1st + " "+ new Date().toLocaleString("en-US", {timeZone: "Asia/Hong_Kong"}));
       }
     }
@@ -149,17 +149,18 @@ function calc_3001 ( row, date){
         if (dataDate == date_end) {
           setFormulas_3001_endDay(sheet, row, dataDate);
         } else {
-          sheet.getRange('J'+row).setValue( data_after_1stday[ dataDate + Curr_C_str ].OQP_CLOSE ); /* J "結算日 即月 Call"               */
-          sheet.getRange('L'+row).setValue( data_after_1stday[ dataDate + Curr_P_str ].OQP_CLOSE ); /* L "結算日 即月 Put"                */
+          sheet.getRange('J'+row).setValue( data_after_1stday[ dataDate + Curr_C_str ].OQP_CLOSE ).setNote( dataDate + Curr_C_str ); /* J "結算日 即月 Call"               */
+          sheet.getRange('L'+row).setValue( data_after_1stday[ dataDate + Curr_P_str ].OQP_CLOSE ).setNote( dataDate + Curr_P_str ); /* L "結算日 即月 Put"                */
         }
-        sheet.getRange('N'+row).setValue( data_after_1stday[ dataDate + Next_C_str ].OQP_CLOSE ); // N: 結算日    下月 Call  date_end   + CommonData.Month[contract.next.month] + "-" + contract.next.year + "-" + strike_next + "-" + "C"
-        sheet.getRange('P'+row).setValue( data_after_1stday[ dataDate + Next_P_str ].OQP_CLOSE ); // P: 結算日    下月 Put   date_end   + CommonData.Month[contract.next.month] + "-" + contract.next.year + "-" + strike_next + "-" + "P"
+        sheet.getRange('N'+row).setValue( data_after_1stday[ dataDate + Next_C_str ].OQP_CLOSE ).setNote( dataDate + Next_C_str ); // N: 結算日    下月 Call  date_end   + CommonData.Month[contract.next.month] + "-" + contract.next.year + "-" + strike_next + "-" + "C"
+        sheet.getRange('P'+row).setValue( data_after_1stday[ dataDate + Next_P_str ].OQP_CLOSE ).setNote( dataDate + Next_P_str ); // P: 結算日    下月 Put   date_end   + CommonData.Month[contract.next.month] + "-" + contract.next.year + "-" + strike_next + "-" + "P"
         sheet.getRange('W'+row).setValue( "from " + dataDate + " "+ new Date().toLocaleString("en-US", {timeZone: "Asia/Hong_Kong"}));
         
         
         setFormulas_3001_beforeEndDay(sheet, row, dataDate);
       }
     }
+    
   } catch (e) { errorLog(e); return "failed" + e.message + ";" + e.fileName + "(" + e.lineNumber + ")"}
   return "success";
 }
