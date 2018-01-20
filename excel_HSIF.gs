@@ -4,14 +4,27 @@ function HSIF_test_addExcel_trigger(){
 function HSIF_test_addExcel(){
   HSIF.addExcel(2706);
 }
+function HSIF_getRange_json_test(){ HSIF.getRange_json('171229', '180112'); }
+
+function HSIF_getDate_test(){}
 
 var HSIF = {
+  
+  getRange_json: function (dateFrom, dateEnd) {
+  	var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('HSIF');
+    var range = sheet.getRange('A:A').getValues();
+    console.log(range)
+  },
+  getDate: function (argument) {
+  	// body...
+  },
+
   addExcel_trigger: function(date) {
-    var sheet = SpreadsheetApp.openById('1urOweWT8JMU2JWJy2gHCvXt-vGHkb5LSS16nWG79FEc').getSheetByName('HSIF');
+    var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('HSIF');
     HSIF.addExcel(null, date);
   },
   addExcel: function(row, date) {
-    var sheet = SpreadsheetApp.openById('1urOweWT8JMU2JWJy2gHCvXt-vGHkb5LSS16nWG79FEc').getSheetByName('HSIF');
+    var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('HSIF');
     if(row == null) {
       row = sheet.getLastRow() + 1; //new Row
     }else{
@@ -97,3 +110,31 @@ date,Contract_Month,night_Open_Price,night_Daily_High,night_Daily_Low,night_Clos
 171229,JUN-18,29611,29611,29555,29555,11,29568,29653,29562,930,29594,-9,29855,27790,941,2521,-350
 
 **/
+
+
+
+
+function findHSIF_row_ByDate(date)
+{
+	//  var searchString = "180112";
+	var searchString = date;
+	var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("HSIF"); 
+	var column =1; //column Index   
+	var columnValues = sheet.getRange(2, column, sheet.getLastRow()).getValues(); //1st is header row
+	var searchResult = columnValues.findListListIndex(searchString) + 2; //Row Index - 2
+
+	//return searchResult;
+
+	if(searchResult != -1){
+      //searchResult + 2 is row index.
+      //SpreadsheetApp.getActiveSpreadsheet().setActiveRange(sheet.getRange(searchResult, 1))
+	}
+}
+
+Array.prototype.findListListIndex = function(search){
+  if(search == "") return false;
+  for (var i=0; i<this.length; i++)
+    if (this[i][0] == search) return i;
+
+  return -1;
+} 

@@ -4,7 +4,7 @@ function getCommonData(){
   return returnData;
 }
 function getDateList(){
-  var sheet = SpreadsheetApp.openById('1urOweWT8JMU2JWJy2gHCvXt-vGHkb5LSS16nWG79FEc').getSheetByName('date');
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('date');
   var rangeList = sheet.getRange('C8:C');
   var list_str = rangeList.getValues().filter(function (val) {if(val != ""){return val;}}).join();
   var list = list_str.split(',')
@@ -75,7 +75,7 @@ var CommonData = {
 }
 
 function updateDateList(){
-  var sheet = SpreadsheetApp.openById('1urOweWT8JMU2JWJy2gHCvXt-vGHkb5LSS16nWG79FEc').getSheetByName('date');
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('date');
   var rangeList = sheet.getRange('C1');
   var list_str = rangeList.getValue();
   var list = list_str.split(',')
@@ -86,7 +86,7 @@ function updateDateList(){
 //triggered daily
 function addDateList_test(){ addDateList ("171229")}
 function addDateList(date){
-  var sheet = SpreadsheetApp.openById('1urOweWT8JMU2JWJy2gHCvXt-vGHkb5LSS16nWG79FEc').getSheetByName('date');
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('date');
   
   var target_row = findTargetRow(date, sheet);
   
@@ -103,13 +103,13 @@ function addDateList(date){
   return true;
 }
 function getLastTransactionDate(){
-  var sheet = SpreadsheetApp.openById('1urOweWT8JMU2JWJy2gHCvXt-vGHkb5LSS16nWG79FEc').getSheetByName('date');
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('date');
   return sheet.getRange('D2').getValue();
 }
 function findTargetRow(date, sheet){
   try{
     if(sheet == null){
-      sheet = SpreadsheetApp.openById('1urOweWT8JMU2JWJy2gHCvXt-vGHkb5LSS16nWG79FEc').getSheetByName('date');
+      sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('date');
     }
     var sheet_serch_row_base = 2;
     var rangeList = sheet.getRange('A'+sheet_serch_row_base+':B');
@@ -140,7 +140,7 @@ function getContractYearMonth_currStr(date){
   return getContractYearMonths_json(date, true);
 }  
 function getContractYearMonths_json(date, isCurrStr){
-  var sheet = SpreadsheetApp.openById('1urOweWT8JMU2JWJy2gHCvXt-vGHkb5LSS16nWG79FEc').getSheetByName('date');
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('date');
   var target_row = findTargetRow(date, sheet);
   var rangeList = sheet.getRange('A' + target_row + ':A'+ (target_row +2) );
   var list_str = rangeList.getValues(); //[["2017-11"], ["2017-12"], ["2018-01"]]
@@ -171,7 +171,7 @@ function getDate_Next(date){
   } catch (e) { errorLog(e); return "failed" + e.message + ";" + e.fileName + "(" + e.lineNumber + ")"}
 }
 
-function getDate_firstdateOfMonth_test(){ return getContractYearMonthInfo("2017-12") }
+function getDate_firstdateOfMonth_test(){ return getContractYearMonthInfo_byMonth("2017-12") }
 
 function getDate_firstdateOfMonth_byDate(date){ 
   var month = getContractYearMonth_currStr(date);
@@ -180,7 +180,7 @@ function getDate_firstdateOfMonth_byDate(date){
 function getContractYearMonthInfo_byMonth(month){
   try{  
     if(month && typeof month == "string" && month.length == 7 ){ //2017-12
-      var sheet = SpreadsheetApp.openById('1urOweWT8JMU2JWJy2gHCvXt-vGHkb5LSS16nWG79FEc').getSheetByName('date');
+      var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('date');
       var rangeList = sheet.getRange('A3:C');
       var valuesList = rangeList.getValues(); 
       var returnValue = {};

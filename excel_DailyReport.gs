@@ -1,9 +1,12 @@
 //add new daily report to sheet DailyReport
 function DailyReport_Trigger(){
-  var sheet = SpreadsheetApp.openById('1urOweWT8JMU2JWJy2gHCvXt-vGHkb5LSS16nWG79FEc').getSheetByName('DailyReport');
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('DailyReport');
   var newRow = sheet.getLastRow() + 1;
   
   calc_DailyReport_openDialog(newRow)
+  
+  var range = sheet.getRange('A' +newRow +':AA'+ newRow); range.setValues( range.getValues() );
+  
   return true;
 }
 
@@ -20,7 +23,7 @@ function calc_DailyReport_openDialog ( row ){
 }
 
 function init_DailyReport ( row, date ){
-  var sheet = SpreadsheetApp.openById('1urOweWT8JMU2JWJy2gHCvXt-vGHkb5LSS16nWG79FEc').getSheetByName('DailyReport');
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('DailyReport');
 
   if(date == null){  date = sheet.getRange('B'+row).getValue(); }   
   if(date == ""  ){  date = getLastTransactionDate(); }
@@ -51,7 +54,7 @@ function init_DailyReport ( row, date ){
 function calc_DailyReport ( row ){
   try{
     Logger.log("\n\n trigered calc_DailyReport("+row + ") ------------------------------------\n" );
-    var sheet = SpreadsheetApp.openById('1urOweWT8JMU2JWJy2gHCvXt-vGHkb5LSS16nWG79FEc').getSheetByName('DailyReport');
+    var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('DailyReport');
     
     var rangeList = sheet.getRange('A'+row+':H'+row);
     var valueList = rangeList.getValues()[0];    
@@ -80,7 +83,7 @@ function calc_DailyReport ( row ){
       sheet.getRange('L'+row).setValue( data[ date + Next_P_str  ].OQP_CLOSE ); // K: 交易日 下月 Put     date + CommonData.Month[contract_next.month]  + "-" + contract_next.year  + "-" + strike + "-" + "P" 
       sheet.getRange('M'+row).setValue( data[ date + Next2_C_str ].OQP_CLOSE ); // J: 交易日 下下月 Call  date + CommonData.Month[contract_next2.month] + "-" + contract_next2.year + "-" + strike + "-" + "C"
       sheet.getRange('N'+row).setValue( data[ date + Next2_P_str ].OQP_CLOSE ); // K: 交易日 下下月 Put   date + CommonData.Month[contract_next2.month] + "-" + contract_next2.year + "-" + strike + "-" + "P" 
-      sheet.getRange('X'+row).setValue( "from " + date + " "+ new Date().toLocaleString("en-US", {timeZone: "Asia/Hong_Kong"}));
+      sheet.getRange('X'+row).setValue( date + " "+ new Date().toLocaleString("en-US", {timeZone: "Asia/Hong_Kong"}));
     }
     
   } catch (e) { errorLog(e); return "failed" + e.message + ";" + e.fileName + "(" + e.lineNumber + ")"}
@@ -88,7 +91,7 @@ function calc_DailyReport ( row ){
 }
 
 function getfunction(){
-  var sheet = SpreadsheetApp.openById('1urOweWT8JMU2JWJy2gHCvXt-vGHkb5LSS16nWG79FEc').getSheetByName('DailyReport');
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('DailyReport');
   var aa= sheet.getRange('B14:M14').getFormulasR1C1();
   Logger.log(aa);
 }

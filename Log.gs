@@ -1,6 +1,6 @@
 
 function logError(message, fileName, lineNumber){
-  var errorSheet = SpreadsheetApp.openById('1urOweWT8JMU2JWJy2gHCvXt-vGHkb5LSS16nWG79FEc').getSheetByName('Errors');
+  var errorSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Errors');
   lastRow = errorSheet.getLastRow() + 1;
   var range = errorSheet.getRange( 'A' + lastRow + ':D' +lastRow);
   range.setValues([[
@@ -19,9 +19,12 @@ function errorLog(e){
 }
 
 
-function test(){
-  var sheet = SpreadsheetApp.openById('1urOweWT8JMU2JWJy2gHCvXt-vGHkb5LSS16nWG79FEc').getSheetByName('Errors');
-  
-  var a = sheet.getRange('A1')
-  a.setValue("1111").setNote("updated at nnnn\n1111");
+function Log_test(range){
+  if(!range){
+    var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Errors');
+    range = sheet.getRange('A1')
+  }
+  var d = new Date();
+//  range.setValue( new Date().toLocaleString("en-US", {timeZone: "Asia/Hong_Kong"}) );
+  range.setValue( new Date() );
 }

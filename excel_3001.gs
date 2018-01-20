@@ -10,7 +10,7 @@ function calc_3001_test(){
 
 function formular_test(){
   row = 106;
-  var sheet = SpreadsheetApp.openById('1urOweWT8JMU2JWJy2gHCvXt-vGHkb5LSS16nWG79FEc').getSheetByName('3001');
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('3001');
   //  setFormulas_3001_1stDay(sheet, row);
   setFormulas_3001_endDay(sheet, row);
 }
@@ -33,7 +33,7 @@ function DailyMartketReport_triger(date){
   try{
     var sheet_serch_row_base = 81;
     
-    var sheet = SpreadsheetApp.openById('1urOweWT8JMU2JWJy2gHCvXt-vGHkb5LSS16nWG79FEc').getSheetByName('3001');
+    var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('3001');
     var rangeList = sheet.getRange('B'+sheet_serch_row_base+':C');
     var valuesList = rangeList.getValues();
     
@@ -56,6 +56,9 @@ function DailyMartketReport_triger(date){
     
     // update row 2 for today's record, will send extra email
     calc_3001_today(date);
+    
+    var range = sheet.getRange('A' +target_row +':AA'+ target_row); range.setValues( range.getValues() );
+    range = sheet.getRange('A2:AA2');                               range.setValues( range.getValues() );
     
   } catch (e) { errorLog(e); return "failed" + e.message + ";" + e.fileName + "(" + e.lineNumber + ")"}
 }
@@ -103,7 +106,7 @@ function getClosestStrikePrice(goal){
 function calc_3001 ( row, date){
   try{
     Logger.log("\n\n trigered calc_3001("+row + " "+date+ ") ------------------------------------\n" );
-    var sheet = SpreadsheetApp.openById('1urOweWT8JMU2JWJy2gHCvXt-vGHkb5LSS16nWG79FEc').getSheetByName('3001');
+    var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('3001');
     var rangeList = sheet.getRange('A'+row+':H'+row);
     
     var today_yymmdd = date;
@@ -135,7 +138,7 @@ function calc_3001 ( row, date){
         sheet.getRange('K'+row).setValue( data_1st[ date_1st + Curr_P_str ].OQP_CLOSE ).setNote( date_1st + Curr_P_str ); // K: 1st交易日 即月 Put   date_1st + CommonData.Month[contract.curr.month] + "-" + contract.curr.year + "-" + strike_curr + "-" + "P"
         sheet.getRange('M'+row).setValue( data_1st[ date_1st + Next_C_str ].OQP_CLOSE ).setNote( date_1st + Next_C_str ); // M: 1st交易日 下月 Call  date_1st + CommonData.Month[contract.next.month] + "-" + contract.next.year + "-" + strike_next + "-" + "C"
         sheet.getRange('O'+row).setValue( data_1st[ date_1st + Next_P_str ].OQP_CLOSE ).setNote( date_1st + Next_P_str ); // O: 1st交易日 下月 Put   date_1st + CommonData.Month[contract.next.month] + "-" + contract.next.year + "-" + strike_next + "-" + "P"      
-        sheet.getRange('W'+row).setValue( "from " + date_1st + " "+ new Date().toLocaleString("en-US", {timeZone: "Asia/Hong_Kong"}));
+        sheet.getRange('W'+row).setValue( date_1st + " "+ new Date().toLocaleString("en-US", {timeZone: "Asia/Hong_Kong"}));
       }
     }
     if (date_1st < today_yymmdd ) { // if 第一交易日 < current Date
@@ -154,7 +157,7 @@ function calc_3001 ( row, date){
         }
         sheet.getRange('N'+row).setValue( data_after_1stday[ dataDate + Next_C_str ].OQP_CLOSE ).setNote( dataDate + Next_C_str ); // N: 結算日    下月 Call  date_end   + CommonData.Month[contract.next.month] + "-" + contract.next.year + "-" + strike_next + "-" + "C"
         sheet.getRange('P'+row).setValue( data_after_1stday[ dataDate + Next_P_str ].OQP_CLOSE ).setNote( dataDate + Next_P_str ); // P: 結算日    下月 Put   date_end   + CommonData.Month[contract.next.month] + "-" + contract.next.year + "-" + strike_next + "-" + "P"
-        sheet.getRange('W'+row).setValue( "from " + dataDate + " "+ new Date().toLocaleString("en-US", {timeZone: "Asia/Hong_Kong"}));
+        sheet.getRange('W'+row).setValue( dataDate + " "+ new Date().toLocaleString("en-US", {timeZone: "Asia/Hong_Kong"}));
         
         
         setFormulas_3001_beforeEndDay(sheet, row, dataDate);

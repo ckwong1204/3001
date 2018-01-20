@@ -8,6 +8,7 @@ function onOpen() {
             .addItem('Update DailyReport selected row', 'updateDailyReportexcel')
             .addItem('Update HSIF', 'updateHSIFexcel')
             .addItem('Transter Fomula to value', 'transterToValue')
+            .addItem('test', 'html_control_test')
             .addToUi();
 }
 
@@ -48,7 +49,13 @@ function updateHSIFexcel(){
 
 function transterToValue(){
   var range = SpreadsheetApp.getActiveRange();
+  logError(range, range.getA1Notation())
   range.setValues( range.getValues() );
+}
+
+function html_control_test(){
+  var range = SpreadsheetApp.getActiveRange();
+  Log_test(range);
 }
 //menu ----------------------------------------------------------------------
 
