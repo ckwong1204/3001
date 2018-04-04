@@ -83,7 +83,7 @@ function calc_DailyReport ( row ){
       sheet.getRange('L'+row).setValue( data[ date + Next_P_str  ].OQP_CLOSE ); // K: 交易日 下月 Put     date + CommonData.Month[contract_next.month]  + "-" + contract_next.year  + "-" + strike + "-" + "P" 
       sheet.getRange('M'+row).setValue( data[ date + Next2_C_str ].OQP_CLOSE ); // J: 交易日 下下月 Call  date + CommonData.Month[contract_next2.month] + "-" + contract_next2.year + "-" + strike + "-" + "C"
       sheet.getRange('N'+row).setValue( data[ date + Next2_P_str ].OQP_CLOSE ); // K: 交易日 下下月 Put   date + CommonData.Month[contract_next2.month] + "-" + contract_next2.year + "-" + strike + "-" + "P" 
-      sheet.getRange('X'+row).setValue( date + " "+ new Date().toLocaleString("en-US", {timeZone: "Asia/Hong_Kong"}));
+      sheet.getRange('X'+row).setValue( date + " "+ getDateNowStr() );
     }
     
   } catch (e) { errorLog(e); return "failed" + e.message + ";" + e.fileName + "(" + e.lineNumber + ")"}

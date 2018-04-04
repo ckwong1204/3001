@@ -138,7 +138,7 @@ function calc_3001 ( row, date){
         sheet.getRange('K'+row).setValue( data_1st[ date_1st + Curr_P_str ].OQP_CLOSE ).setNote( date_1st + Curr_P_str ); // K: 1st交易日 即月 Put   date_1st + CommonData.Month[contract.curr.month] + "-" + contract.curr.year + "-" + strike_curr + "-" + "P"
         sheet.getRange('M'+row).setValue( data_1st[ date_1st + Next_C_str ].OQP_CLOSE ).setNote( date_1st + Next_C_str ); // M: 1st交易日 下月 Call  date_1st + CommonData.Month[contract.next.month] + "-" + contract.next.year + "-" + strike_next + "-" + "C"
         sheet.getRange('O'+row).setValue( data_1st[ date_1st + Next_P_str ].OQP_CLOSE ).setNote( date_1st + Next_P_str ); // O: 1st交易日 下月 Put   date_1st + CommonData.Month[contract.next.month] + "-" + contract.next.year + "-" + strike_next + "-" + "P"      
-        sheet.getRange('W'+row).setValue( date_1st + " "+ new Date().toLocaleString("en-US", {timeZone: "Asia/Hong_Kong"}));
+        sheet.getRange('W'+row).setValue( date_1st + " "+  getDateNowStr() );
       }
     }
     if (date_1st < today_yymmdd ) { // if 第一交易日 < current Date
@@ -157,7 +157,7 @@ function calc_3001 ( row, date){
         }
         sheet.getRange('N'+row).setValue( data_after_1stday[ dataDate + Next_C_str ].OQP_CLOSE ).setNote( dataDate + Next_C_str ); // N: 結算日    下月 Call  date_end   + CommonData.Month[contract.next.month] + "-" + contract.next.year + "-" + strike_next + "-" + "C"
         sheet.getRange('P'+row).setValue( data_after_1stday[ dataDate + Next_P_str ].OQP_CLOSE ).setNote( dataDate + Next_P_str ); // P: 結算日    下月 Put   date_end   + CommonData.Month[contract.next.month] + "-" + contract.next.year + "-" + strike_next + "-" + "P"
-        sheet.getRange('W'+row).setValue( dataDate + " "+ new Date().toLocaleString("en-US", {timeZone: "Asia/Hong_Kong"}));
+        sheet.getRange('W'+row).setValue( dataDate + " "+ getDateNowStr() );
         
         
         setFormulas_3001_beforeEndDay(sheet, row, dataDate);
@@ -199,18 +199,18 @@ function setFormulas_3001_1stDay(sheet, row, dataDate){
   var rangeList = sheet.getRange('D'+row+':H'+row);
   var formulaR1C1List = [];
   /* D "IV spread"                */   formulaR1C1List[0] = "=R[0]C[9]+R[0]C[11]-ABS(R[0]C[2]-R[0]C[4]) -(R[0]C[5]+R[0]C[7]-ABS(R[0]C[1]-R[0]C[3]))";
-  /* E "1st交易日 即月 HSIF:"       */   formulaR1C1List[1] = '=VLOOKUP("'+dataDate+'",HSIF!C1:C15,6,FALSE)';
-  /* F "1st交易日 下月 HSIF:"       */   formulaR1C1List[2] = '=VLOOKUP("'+dataDate+'",HSIF!C1:C15,13,FALSE)';
-  /* G "即月ATM 行使價:"            */   formulaR1C1List[3] = "=getClosestStrikePrice(R[0]C[-2])";
-  /* H "下月ATM 行使價:"            */   formulaR1C1List[4] = "=getClosestStrikePrice(R[0]C[-2])";
+  /* E "1st交易日 即月 HSIF:"       */   formulaR1C1List[1] = '=INT(VLOOKUP("'+dataDate+'",HSIF!C1:C15,6,FALSE))';
+  /* F "1st交易日 下月 HSIF:"       */   formulaR1C1List[2] = '=INT(VLOOKUP("'+dataDate+'",HSIF!C1:C15,13,FALSE))';
+  /* G "即月ATM 行使價:"            */   formulaR1C1List[3] = "=INT(getClosestStrikePrice(R[0]C[-2]))";
+  /* H "下月ATM 行使價:"            */   formulaR1C1List[4] = "=INT(getClosestStrikePrice(R[0]C[-2]))";
   
   rangeList.setFormulasR1C1([formulaR1C1List]);
 
 }
 
 function setFormulas_3001_endDay(sheet, row, dataDate){
-/* J "結算日 即月 Call"              */   sheet.getRange('J'+row).setFormula("=IF(R[0]C[7]>R[0]C[-3],R[0]C[7]-R[0]C[-3],0)");
-/* L "結算日 即月 Put"               */   sheet.getRange('L'+row).setFormula("=IF(R[0]C[5]<R[0]C[-5],R[0]C[-5]-R[0]C[5],0)");
+/* J "結算日 即月 Call"              */   sheet.getRange('J'+row).setFormula("=IF(INT(R[0]C[7])>INT(R[0]C[-3]),R[0]C[7]-R[0]C[-3],0)");
+/* L "結算日 即月 Put"               */   sheet.getRange('L'+row).setFormula("=IF(INT(R[0]C[5])<INT(R[0]C[-5]),R[0]C[-5]-R[0]C[5],0)");
 }
 
 function setFormulas_3001_beforeEndDay(sheet, row, dataDate){

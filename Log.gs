@@ -24,7 +24,13 @@ function Log_test(range){
     var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Errors');
     range = sheet.getRange('A1')
   }
-  var d = new Date();
-//  range.setValue( new Date().toLocaleString("en-US", {timeZone: "Asia/Hong_Kong"}) );
-  range.setValue( new Date() );
+  range.setValue( "180223 " + getDateNowStr()  );
+}
+
+function test(){
+  var t = getDateNowStr();
+  
+  Logger.log(t);
+  Logger.log(t);
+  
 }

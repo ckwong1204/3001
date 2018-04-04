@@ -88,6 +88,20 @@ function doGet(e) {
       JSON.stringify(result)
     ).setMimeType(ContentService.MimeType.TEXTJAVASCRIPT);
   }
+  
+  if(e.parameter.a == "csv"){
+    var result = run_unzip();
+    return ContentService.createTextOutput(
+      "ddd,fff,dfdf\n111,222,333"
+    ).setMimeType(ContentService.MimeType.CSV).downloadAsFile('test.csv');
+  }
+  
+  if(e.parameter.a == "csv2"){
+    var result = run_unzip();
+    return ContentService.createTextOutput(
+      "ddd,fff,dfdf\n111,222,333"
+    ).setMimeType(ContentService.MimeType.CSV);
+  }
 }
 
 function getEmail() {
