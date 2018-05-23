@@ -1,5 +1,6 @@
 function get_dqe_csv_test() {
   var data = get_dqe_csv("A50", 170915, 17, "" , "14.00", "."); //SEP17,7.25,C,
+  var data2 = get_dqe_csv("A50", 170915, 17, "" , "14.00", "."); //SEP17,7.25,C,
   Logger.log(data);
 }
 
@@ -28,7 +29,7 @@ function run_unzip() {
   list.forEach(function(item) {
     csvFormat_str += "\n" + item;
   })
-
+  var c222 = getfileByName('hsio170908.zip');
   return csvJSON(csvFormat_str);
 }
 
@@ -189,22 +190,33 @@ function getfileByName_test() {
 }
 // config   /////////////////////////////////////////////
 var FOLDER_ID = '0BytahsRby1tEZC1fUjY3Z3Z2QzA'; // AutoDownloadData
-
+var fileByNameCache = {};
 function getfileByName(zipFileName) {
-  var theFolder = DriveApp.getFolderById(FOLDER_ID);
-  var theFile = theFolder.getFilesByName(zipFileName);
-  if(theFile.hasNext()){
-    var fileBlob = theFile.next().getBlob();
-    fileBlob.setContentType("application/zip");
-    var unZippedfile = Utilities.unzip(fileBlob);
-    
-    var file = unZippedfile[0];
-    var fileContext = file.getDataAsString();
-    return fileContext;
+  var cache = CacheService.getDocumentCache();
+  var cached = cache.get(zipFileName) || fileByNameCache[zipFileName];
+
+  if(cached == null){
+    var theFolder = DriveApp.getFolderById(FOLDER_ID);
+    var theFile = theFolder.getFilesByName(zipFileName);
+    if(theFile.hasNext()){
+      var fileBlob = theFile.next().getBlob();
+      fileBlob.setContentType("application/zip");
+      var unZippedfile = Utilities.unzip(fileBlob);
+      
+      var file = unZippedfile[0];
+      var fileContext = file.getDataAsString();
+      try{
+        cache.put(zipFileName, fileContext)
+      }catch(e){
+        fileByNameCache[zipFileName] = fileContext;
+      }
+      return fileContext;
+    }
+    var errorMsg = 'file '+ zipFileName+ ' not exist in folder ' + theFolder.getName();
+    logError( errorMsg, 'Data_unzip', '106')
+    //  throw errorMsg;
   }
-  var errorMsg = 'file '+ zipFileName+ ' not exist in folder ' + theFolder.getName();
-  logError( errorMsg, 'Data_unzip', '106')
-//  throw errorMsg;
+  return cached;
 }
 
 // var csv is the CSV file with headers /////////////////////////////////////////////
