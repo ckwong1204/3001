@@ -10,16 +10,18 @@ function DailyReport_Trigger(){
   return true;
 }
 
-function calc_DailyReport_test ( row, date ){ 
+function calc_DailyReport_test (){ 
   //get last row  
-  init_DailyReport(5, '171122');
-  calc_DailyReport(5, '171122');
+  init_DailyReport(160, '180403');
+  calc_DailyReport(160, '180403');
+  post_DailyReport(160)
 }
 function calc_DailyReport_openDialog_test (){ calc_DailyReport_openDialog ( 94 )}
 
 function calc_DailyReport_openDialog ( row ){ 
   init_DailyReport(row);
   calc_DailyReport(row);
+  post_DailyReport(row);
 }
 
 function init_DailyReport ( row, date ){
@@ -83,7 +85,8 @@ function calc_DailyReport ( row ){
       sheet.getRange('L'+row).setValue( data[ date + Next_P_str  ].OQP_CLOSE ); // K: 交易日 下月 Put     date + CommonData.Month[contract_next.month]  + "-" + contract_next.year  + "-" + strike + "-" + "P" 
       sheet.getRange('M'+row).setValue( data[ date + Next2_C_str ].OQP_CLOSE ); // J: 交易日 下下月 Call  date + CommonData.Month[contract_next2.month] + "-" + contract_next2.year + "-" + strike + "-" + "C"
       sheet.getRange('N'+row).setValue( data[ date + Next2_P_str ].OQP_CLOSE ); // K: 交易日 下下月 Put   date + CommonData.Month[contract_next2.month] + "-" + contract_next2.year + "-" + strike + "-" + "P" 
-      sheet.getRange('X'+row).setValue( date + " "+ getDateNowStr() );
+            
+      sheet.getRange('Y'+row).setValue( date + " "+ getDateNowStr() );
     }
     
   } catch (e) { errorLog(e); return "failed" + e.message + ";" + e.fileName + "(" + e.lineNumber + ")"}
@@ -94,6 +97,33 @@ function getfunction(){
   var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('DailyReport');
   var aa= sheet.getRange('B14:M14').getFormulasR1C1();
   Logger.log(aa);
+}
+
+function post_DailyReport(row){
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('DailyReport');
+
+  var rangeList = sheet.getRange('Q'+row+':W'+row);
+  var formulaR1C1List = rangeList.getFormulasR1C1();
+  formulaR1C1List[0] = "=(R[0]C[-8]+R[0]C[-7]-ABS(R[0]C[-12]-R[0]C[-9]))";
+  formulaR1C1List[1] = "=(R[0]C[-7]+R[0]C[-6]-ABS(R[0]C[-12]-R[0]C[-10]))";
+  formulaR1C1List[2] = "=(R[0]C[-6]+R[0]C[-5]-ABS(R[0]C[-12]-R[0]C[-11]))";
+  formulaR1C1List[3] = "=R[0]C[-3]-R[0]C[-2]";
+  formulaR1C1List[4] = "=R[0]C[-11]+R[0]C[-12]-(R[0]C[-10]+R[0]C[-9])*2";
+  formulaR1C1List[5] = "=-(R[0]C[-12]+R[0]C[-13])+(R[0]C[-11]+R[0]C[-10])*2";
+  formulaR1C1List[6] = "=-(R[0]C[-13]+R[0]C[-14])+(R[0]C[-12]+R[0]C[-11])" ;
+  rangeList.setFormulasR1C1([formulaR1C1List]);
+  
+}
+
+function test(){
+  post_DailyReport(160)
+//  var row = 120;
+//  var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('DailyReport');
+//    
+//  var rangeList = sheet.getRange('A'+row+':X'+row);
+//  var c= rangeList.getFormulasR1C1();
+//  Logger.log(c);
+  
 }
 
 // A 合約月	 		=getContractYearMonths(date)

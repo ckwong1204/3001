@@ -1,18 +1,15 @@
-function HSIF_test_addExcel_trigger(){
-  HSIF.addExcel_trigger('171229');
-}
-function HSIF_test_addExcel(){
-  HSIF.addExcel(2706);
-}
-function HSIF_getRange_json_test(){ HSIF.getRange_json('171229', '180112'); }
-
-function HSIF_getDate_test(){}
+function HSIF_test_addExcel_trigger(){   HSIF.addExcel_trigger('171229'); }
+function HSIF_test_addExcel(){           HSIF.addExcel(2706); }
+function HSIF_getRange_json_test(){      HSIF.getRange_json('171229', '180112'); }
+function HSIF_getDate_test(){            HSIF.getDate(); }
 
 var HSIF = {
   
   getRange_json: function (dateFrom, dateEnd) {
   	var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('HSIF');
-    var range = sheet.getRange('A:A').getValues();
+//    var range = sheet.getRange('A:A').getValues();
+    var values = sheet.getDataRange().getValues();
+
     console.log(range)
   },
   getDate: function (argument) {

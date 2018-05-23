@@ -4,7 +4,7 @@ function logError(message, fileName, lineNumber){
   lastRow = errorSheet.getLastRow() + 1;
   var range = errorSheet.getRange( 'A' + lastRow + ':D' +lastRow);
   range.setValues([[
-    new Date().toLocaleString("en-US", {timeZone: "Asia/Hong_Kong"}),
+    getDateNowStr(),
     message,
     fileName,
     lineNumber
@@ -15,7 +15,7 @@ function logError(message, fileName, lineNumber){
 ////  Error ////////////////////////////////////////////////////////////////////////////
 
 function errorLog(e){
-  logError(e.message, e.fileName, e.lineNumber);
+    logError(e.message, e.fileName, e.lineNumber);
 }
 
 
@@ -33,4 +33,8 @@ function test(){
   Logger.log(t);
   Logger.log(t);
   
+}
+
+function test11111(){ 
+  SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Errors').appendRow([1,2,3,4])
 }
