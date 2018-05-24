@@ -17,7 +17,7 @@ function formular_test(){
 
 function DailyMartketReport_triger_test(){
   //  calc_3001(80);
-  DailyMartketReport_triger('171129');
+  DailyMartketReport_triger('180523');
 }
 function calc_3001_today_test(date){ calc_3001_today('171124'); }
 // test ------------------------------------------------------------------
@@ -62,22 +62,22 @@ function DailyMartketReport_triger(date){
     
   } catch (e) { errorLog(e); return "failed" + e.message + ";" + e.fileName + "(" + e.lineNumber + ")"}
 }
-/**
- * get HSIO
- * @param {18-Sep-17} str
- * @return {"170918"} date
- *
- * @customfunction
- */
-function toDate_dd_MMM_yy(str) {
-//    var str = "31-Mar-17";
-  var date = str.split('-')[0];
-  var Month = str.split('-')[1];
-  var year = str.split('-')[2];
-  return year + CommonData.Month[Month.toUpperCase()] + (date.length == 1 ? "0" + date : date);
-//  var a =  year + CommonData.Month[Month.toUpperCase()] + (date.length == 1 ? "0" + date : date);
-//  return a;
-}
+///**
+// * get HSIO
+// * @param {18-Sep-17} str
+// * @return {"170918"} date
+// *
+// * @customfunction
+// */
+//function toDate_dd_MMM_yy(str) {
+////    var str = "31-Mar-17";
+//  var date = str.split('-')[0];
+//  var Month = str.split('-')[1];
+//  var year = str.split('-')[2];
+//  return year + CommonData.Month[Month.toUpperCase()] + (date.length == 1 ? "0" + date : date);
+////  var a =  year + CommonData.Month[Month.toUpperCase()] + (date.length == 1 ? "0" + date : date);
+////  return a;
+//}
 
 /**
  * get HSIO Closest StrikePrice

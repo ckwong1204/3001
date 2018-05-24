@@ -16,6 +16,7 @@ var HSIF = {
   	// body...
   },
 
+  // rerun-able
   addExcel_trigger: function(date) {
     var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('HSIF');
     HSIF.addExcel(null, date);

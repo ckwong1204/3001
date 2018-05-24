@@ -1,14 +1,21 @@
 
-function logError(message, fileName, lineNumber){
-  var errorSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Errors');
-  lastRow = errorSheet.getLastRow() + 1;
-  var range = errorSheet.getRange( 'A' + lastRow + ':D' +lastRow);
-  range.setValues([[
+function logError(s1, s2, s3, s4){
+//  var errorSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Errors');
+//  lastRow = errorSheet.getLastRow() + 1;
+//  var range = errorSheet.getRange( 'A' + lastRow + ':D' +lastRow);
+//  range.setValues([[
+//    getDateNowStr(),
+//    message,
+//    fileName,
+//    lineNumber
+//  ]]);
+  SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Errors').appendRow([
     getDateNowStr(),
-    message,
-    fileName,
-    lineNumber
-  ]]);
+    s1,
+    s2,
+    s3,
+    s4
+  ]);
 }
 
 
@@ -27,14 +34,7 @@ function Log_test(range){
   range.setValue( "180223 " + getDateNowStr()  );
 }
 
-function test(){
-  var t = getDateNowStr();
+function test222(){
+  logError("123")
   
-  Logger.log(t);
-  Logger.log(t);
-  
-}
-
-function test11111(){ 
-  SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Errors').appendRow([1,2,3,4])
 }

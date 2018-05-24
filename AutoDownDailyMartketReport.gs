@@ -44,20 +44,29 @@ function get_HKEX_Url(hkexType, date){
 
 // download Market Data - Daily Market Report
 function run_downloadMarketData() {
-  var date = getDate_str(0);
-  var is_DailyMartketReport_triger = false;
-  
-//  uploadFile(get_HKEX_Url(hkexTypeMap.stockOption, date));
-  Object.keys(hkexTypeMap).forEach(function(key){
-    var ifSuccess = uploadFile(get_HKEX_Url(hkexTypeMap[key], date));
-    if(key == 'hsio' && ifSuccess) { is_DailyMartketReport_triger = true; }
-  });
-
-  if (is_DailyMartketReport_triger){ 
-    addDateList(date);
-    HSIF.addExcel_trigger(date);
-    DailyMartketReport_triger(date); 
-    DailyReport_Trigger();
+  try{
+    var date = getDate_str(0);
+    var is_DailyMartketReport_triger = false;
+    
+    //  uploadFile(get_HKEX_Url(hkexTypeMap.stockOption, date));
+    Object.keys(hkexTypeMap).forEach(function(key){
+      var ifSuccess = uploadFile(get_HKEX_Url(hkexTypeMap[key], date));
+      if(key == 'hsio' && ifSuccess) { is_DailyMartketReport_triger = true; }
+    });
+    
+    if (is_DailyMartketReport_triger){ 
+      isAddDateList = addDateList(date); //re-runable
+      HSIF.addExcel_trigger(date); //re-runable
+      DailyMartketReport_triger(date); 
+      DailyReport_Trigger();
+      
+    }
+  } catch (e) { 
+    errorLog(
+      "run_downloadMarketDat failed",
+      
+      "failed" + e.message + ";" + e.fileName + "(" + e.lineNumber + ")"
+    );
   }
   
   sendEmail(date);

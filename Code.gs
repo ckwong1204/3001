@@ -1,14 +1,14 @@
 function run() {
-  var data = getYahooFinanceOpen("1733.hk");
-  clacRSI(data, 14)
+//  var data = getYahooFinanceOpen("1733.hk");
+//  clacRSI(data, 14)
 }
 
 function getRSI(stocknumber, rsi_windows){
   if ( /^\d{4}$/.test(stocknumber)){
     stocknumber += ".hk";
   }
-  var data = getYahooFinanceOpen(stocknumber);
-  return clacRSI(data, rsi_windows);
+//  var data = getYahooFinanceOpen(stocknumber);
+//  return clacRSI(data, rsi_windows);
 }
 
 function clacRSI(data, rsi_windows) {
