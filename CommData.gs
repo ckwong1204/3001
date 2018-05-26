@@ -1,15 +1,9 @@
 function getCommonData(){
   returnData = CommonData;
-  returnData["DateList"] = getDateList()
+  returnData["DateList"] = getDateList(); //excel_Date.gs
   return returnData;
 }
-function getDateList(){
-  var sheet = getSheetByName('date');
-  var rangeList = sheet.getRange('C8:C');
-  var list_str = rangeList.getValues().filter(function (val) {if(val != ""){return val;}}).join();
-  var list = list_str.split(',')
-  return list;
-}
+
 var CommonData = {
   Month: {
     "01": "JAN",  "JAN":"01",   1: "JAN",

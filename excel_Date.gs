@@ -1,3 +1,10 @@
+function getDateList(){
+  var sheet = getSheetByName('date');
+  var rangeList = sheet.getRange('C8:C');
+  var list_str = rangeList.getValues().filter(function (val) {if(val != ""){return val;}}).join();
+  var list = list_str.split(',')
+  return list;
+}
 
 function updateDateList(){
   var sheet = getSheetByName('date');
