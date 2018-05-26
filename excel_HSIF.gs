@@ -6,7 +6,7 @@ function HSIF_getDate_test(){            HSIF.getDate(); }
 var HSIF = {
   
   getRange_json: function (dateFrom, dateEnd) {
-  	var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('HSIF');
+  	var sheet = getSheetByName('HSIF');
 //    var range = sheet.getRange('A:A').getValues();
     var values = sheet.getDataRange().getValues();
 
@@ -18,11 +18,11 @@ var HSIF = {
 
   // rerun-able
   addExcel_trigger: function(date) {
-    var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('HSIF');
+    var sheet = getSheetByName('HSIF');
     HSIF.addExcel(null, date);
   },
   addExcel: function(row, date) {
-    var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('HSIF');
+    var sheet = getSheetByName('HSIF');
     if(row == null) {
       row = sheet.getLastRow() + 1; //new Row
     }else{
@@ -116,7 +116,7 @@ function findHSIF_row_ByDate(date)
 {
 	//  var searchString = "180112";
 	var searchString = date;
-	var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("HSIF"); 
+	var sheet = getSheetByName("HSIF"); 
 	var column =1; //column Index   
 	var columnValues = sheet.getRange(2, column, sheet.getLastRow()).getValues(); //1st is header row
 	var searchResult = columnValues.findListListIndex(searchString) + 2; //Row Index - 2
@@ -125,7 +125,7 @@ function findHSIF_row_ByDate(date)
 
 	if(searchResult != -1){
       //searchResult + 2 is row index.
-      //SpreadsheetApp.getActiveSpreadsheet().setActiveRange(sheet.getRange(searchResult, 1))
+      //setActiveRange(sheet.getRange(searchResult, 1))
 	}
 }
 

@@ -1,6 +1,6 @@
 //add new daily report to sheet DailyReport
 function DailyReport_Trigger(){
-  var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('DailyReport');
+  var sheet = getSheetByName('DailyReport');
   var newRow = sheet.getLastRow() + 1;
   
   calc_DailyReport_openDialog(newRow)
@@ -25,7 +25,7 @@ function calc_DailyReport_openDialog ( row ){
 }
 
 function init_DailyReport ( row, date ){
-  var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('DailyReport');
+  var sheet = getSheetByName('DailyReport');
 
   if(date == null){  date = sheet.getRange('B'+row).getValue(); }   
   if(date == ""  ){  date = getLastTransactionDate(); }
@@ -56,7 +56,7 @@ function init_DailyReport ( row, date ){
 function calc_DailyReport ( row ){
   try{
     Logger.log("\n\n trigered calc_DailyReport("+row + ") ------------------------------------\n" );
-    var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('DailyReport');
+    var sheet = getSheetByName('DailyReport');
     
     var rangeList = sheet.getRange('A'+row+':H'+row);
     var valueList = rangeList.getValues()[0];    
@@ -94,13 +94,13 @@ function calc_DailyReport ( row ){
 }
 
 function getfunction(){
-  var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('DailyReport');
+  var sheet = getSheetByName('DailyReport');
   var aa= sheet.getRange('B14:M14').getFormulasR1C1();
   Logger.log(aa);
 }
 
 function post_DailyReport(row){
-  var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('DailyReport');
+  var sheet = getSheetByName('DailyReport');
 
   var rangeList = sheet.getRange('Q'+row+':W'+row);
   var formulaR1C1List = rangeList.getFormulasR1C1();
@@ -118,7 +118,7 @@ function post_DailyReport(row){
 function test(){
   post_DailyReport(160)
 //  var row = 120;
-//  var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('DailyReport');
+//  var sheet = getSheetByName('DailyReport');
 //    
 //  var rangeList = sheet.getRange('A'+row+':X'+row);
 //  var c= rangeList.getFormulasR1C1();

@@ -10,7 +10,7 @@ function calc_3001_test(){
 
 function formular_test(){
   row = 106;
-  var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('3001');
+  var sheet = getSheetByName('3001');
   //  setFormulas_3001_1stDay(sheet, row);
   setFormulas_3001_endDay(sheet, row);
 }
@@ -33,7 +33,7 @@ function DailyMartketReport_triger(date){
   try{
     var sheet_serch_row_base = 81;
     
-    var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('3001');
+    var sheet = getSheetByName('3001');
     var rangeList = sheet.getRange('B'+sheet_serch_row_base+':C');
     var valuesList = rangeList.getValues();
     
@@ -79,21 +79,8 @@ function DailyMartketReport_triger(date){
 ////  return a;
 //}
 
-/**
- * get HSIO Closest StrikePrice
- *
- * @param {26001} goal
- * @return {26000} closest
- *
- * @customfunction
- */
-function getClosestStrikePrice(goal){
-  var closest = CommonData.StrikePrice.reduce(function(prev, curr) {
-    return (Math.abs(curr - goal) < Math.abs(prev - goal) ? curr : prev);
-  });
-  
-  return closest;
-}
+
+
 
 /**
  * get calc_3001
@@ -106,7 +93,7 @@ function getClosestStrikePrice(goal){
 function calc_3001 ( row, date){
   try{
     Logger.log("\n\n trigered calc_3001("+row + " "+date+ ") ------------------------------------\n" );
-    var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('3001');
+    var sheet = getSheetByName('3001');
     var rangeList = sheet.getRange('A'+row+':H'+row);
     
     var today_yymmdd = date;

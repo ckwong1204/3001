@@ -40,7 +40,7 @@ function doPost(e){
   
   sendMessage( id , "hi, "+ username )
   
-  SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Errors').appendRow([getDateNowStr(), id,username,text, contents]);
+  getSheetByName('Errors').appendRow([getDateNowStr(), id,username,text, contents]);
 }
 
 function textTelegramText(){
