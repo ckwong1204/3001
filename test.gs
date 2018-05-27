@@ -22,6 +22,3 @@ function measuringExecutionTime() {
    }
    console.timeEnd(label);      // Stops the timer, logs execution duration.
  }
-
-
-

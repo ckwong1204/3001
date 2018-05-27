@@ -1,68 +1,61 @@
-function getDateList(){
-  var sheet = getSheetByName('date');
-  var rangeList = sheet.getRange('C8:C');
-  var list_str = rangeList.getValues().filter(function (val) {if(val != ""){return val;}}).join();
-  var list = list_str.split(',')
-  return list;
+
+var cacheGetContractMonthInfoList=null;
+function getContractMonthInfoList(){
+  if(!this.cacheGetContractMonthInfoList){
+    var sheet = getSheetByName('date');
+    var rangeList = sheet.getRange('A2:C');
+    
+    this.cacheGetContractMonthInfoList = rangeList.getValues()
+      .map(function(v,index, arr) { return {  //convert to obj
+        contract: v[0], 
+        dateEnd:  v[1], 
+        dateList: v[2] == ""? []: v[2].split(','),
+        sheetRow:  index + 2         
+      }})
+     .filter( function(val) {return val.dateEnd != ""} ); // filter out those Expiry Day 結算日 is empty
+  }
+  return this.cacheGetContractMonthInfoList;
 }
 
-function updateDateList(){
-  var sheet = getSheetByName('date');
-  var rangeList = sheet.getRange('C1');
-  var list_str = rangeList.getValue();
-  var list = list_str.split(',')
-  list.forEach(function(i){
-    addDateList(i)
-  })
+//return concated dateList for all months
+function getDateList(){
+  return getContractMonthInfoList()
+  .reduce(function(concatList,v,i,arr){ return concatList.concat(v.dateList.concat()) }, [])
 }
+
+function findContractMonthInfoByDate(targetDate){
+  var v= getContractMonthInfoList();
+  for (var i = 1; i < v.length; i++) {
+    if(targetDate <= v[i].dateEnd)
+      return v[i];
+  }
+  return null;
+}
+
+function findTargetRow(date){
+  return findContractMonthInfoByDate(date).sheetRow;
+}
+
 //triggered daily
-function addDateList_test(){ addDateList ("171229")}
+function addDateList_test(){ addDateList ("180527")}
 function addDateList(date){
   var sheet = getSheetByName('date');
   
-  var target_row = findTargetRow(date, sheet);
+  var contractMonthInfo = findContractMonthInfoByDate(date);
   
-  var rangeList = sheet.getRange('C' + target_row);
-  var list_str = rangeList.getValue();
-  var is_contain_date = list_str.indexOf(date) !== -1;
-  if(!is_contain_date){
-    list_str += "" + ( list_str == "" ? "":",") + date;
-    rangeList.setValue(list_str);
+  if( contractMonthInfo.dateList.indexOf(date) == -1){
+    var newDateStr = contractMonthInfo.dateList.concat(date).sort().join();
+    sheet.getRange('C' + contractMonthInfo.sheetRow).setValue(newDateStr)
     
     //update  "Last Transaction Date"
     sheet.getRange('D2').setValue(date);
   }
+  
   return true;
 }
 function getLastTransactionDate(){
   var sheet = getSheetByName('date');
   return sheet.getRange('D2').getValue();
-}
-function findTargetRow(date, sheet){
-  try{
-    if(sheet == null){
-      sheet = getSheetByName('date');
-    }
-    var sheet_serch_row_base = 2;
-    var rangeList = sheet.getRange('A'+sheet_serch_row_base+':B');
-    var valuesList = rangeList.getValues();
-    
-    var target_row = sheet_serch_row_base;
-    //  valuesList.forEach(function(item){
-    for (var i = 1; i < valuesList.length; i++) {
-      var last_contract_date_end = valuesList[i-1][1]; /* B "結算日 d/m/Y"                   */
-      var curr_contract_date_end = valuesList[i][1];   /* B "結算日 d/m/Y"                   */
-      if (curr_contract_date_end == "") {
-        target_row += i;
-        break;
-      }
-      if(last_contract_date_end < date && date  <= curr_contract_date_end){ 
-        target_row += i;
-        break;
-      }
-    }
-    return target_row;
-  } catch (e) { errorLog(e); return "failed" + e.message + ";" + e.fileName + "(" + e.lineNumber + ")"}
 }
 function getContractYearMonth_test(date){  
   var a = getContractYearMonth('170101')  
@@ -73,7 +66,7 @@ function getContractYearMonth_currStr(date){
 }  
 function getContractYearMonths_json(date, isCurrStr){
   var sheet = getSheetByName('date');
-  var target_row = findTargetRow(date, sheet);
+  var target_row = findTargetRow(date);
   var rangeList = sheet.getRange('A' + target_row + ':A'+ (target_row +2) );
   var list_str = rangeList.getValues(); //[["2017-11"], ["2017-12"], ["2018-01"]]
   

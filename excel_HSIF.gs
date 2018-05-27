@@ -1,5 +1,5 @@
-function HSIF_test_addExcel_trigger(){   HSIF.addExcel_trigger('171229'); }
-function HSIF_test_addExcel(){           HSIF.addExcel(2706); }
+function HSIF_test_addExcel_trigger(){   HSIF.addExcel_trigger('180525'); }
+function HSIF_test_addExcel(){           HSIF.addExcel('180525'); }
 function HSIF_getRange_json_test(){      HSIF.getRange_json('171229', '180112'); }
 function HSIF_getDate_test(){            HSIF.getDate(); }
 
@@ -16,65 +16,52 @@ var HSIF = {
   	// body...
   },
 
-  // rerun-able
   addExcel_trigger: function(date) {
-    var sheet = getSheetByName('HSIF');
-    HSIF.addExcel(null, date);
+    return HSIF.addExcel(date);
   },
-  addExcel: function(row, date) {
-    var sheet = getSheetByName('HSIF');
-    if(row == null) {
-      row = sheet.getLastRow() + 1; //new Row
-    }else{
-      date = sheet.getRange(row,1).getValue(); //A + row
-    }
+  addExcel: function(date) {
     if(date == null || date == "") 
-      date = getLastTransactionDate();
-    
-    var rangeList = sheet.getRange("A"+row+":AC"+row);
-    var valuesList = [];
-    
+      date = getLastTransactionDate();    
     var json = get_hsif_json(date);
     
     if(json != null){
-      valuesList[0]  = date;							// C	Date
+      getSheetByName('HSIF').appendRow([
+        date,							// C	Date
+        
+        json[0].Contract_Month,         // C. Month
+        json[0].day_Open_Price,			    // Open
+        json[0].day_Daily_High,			    // High
+        json[0].day_Daily_Low,			    // Low
+        json[0].day_Settlement_Price,	  // Close
+        json[0].combined_Open_Interest, // Gross O.I.
+        json[0].day_Volume,				      // Volumn
+        
+        json[1].Contract_Month,
+        json[1].day_Open_Price,			
+        json[1].day_Daily_High,			
+        json[1].day_Daily_Low,			
+        json[1].day_Settlement_Price,	
+        json[1].combined_Open_Interest,	
+        json[1].day_Volume,				
+        
+        json[2].Contract_Month,
+        json[2].day_Open_Price,			
+        json[2].day_Daily_High,			
+        json[2].day_Daily_Low,			
+        json[2].day_Settlement_Price,	
+        json[2].combined_Open_Interest,	
+        json[2].day_Volume,				
+        
+        json[3].Contract_Month,
+        json[3].day_Open_Price,			
+        json[3].day_Daily_High,			
+        json[3].day_Daily_Low,			
+        json[3].day_Settlement_Price,	
+        json[3].combined_Open_Interest,	
+        json[3].day_Volume
+      ]);
       
-      valuesList[1 ] = json[0].Contract_Month
-      valuesList[2 ] = json[0].day_Open_Price;			// D	Open
-      valuesList[3 ] = json[0].day_Daily_High;			// E	High
-      valuesList[4 ] = json[0].day_Daily_Low;			// F	Low
-      valuesList[5 ] = json[0].day_Settlement_Price;	// G	Close
-      valuesList[6 ] = json[0].combined_Open_Interest;	// H	Gross O.I
-      valuesList[7 ] = json[0].day_Volume;				// I	Volumn
-
-      valuesList[8 ] = json[1].Contract_Month
-      valuesList[9 ] = json[1].day_Open_Price;			// J	Open
-      valuesList[10] = json[1].day_Daily_High;			// K	High
-      valuesList[11] = json[1].day_Daily_Low;			// L	Low
-      valuesList[12] = json[1].day_Settlement_Price;	// M	Close
-      valuesList[13] = json[1].combined_Open_Interest;	// N	Gross O.I
-      valuesList[14] = json[1].day_Volume;				// O	Volumn
-
-      valuesList[15] = json[2].Contract_Month
-      valuesList[16] = json[2].day_Open_Price;			// P	Open
-      valuesList[17] = json[2].day_Daily_High;			// Q	High
-      valuesList[18] = json[2].day_Daily_Low;			// R	Low
-      valuesList[19] = json[2].day_Settlement_Price;	// S	Close
-      valuesList[20] = json[2].combined_Open_Interest;	// T	Gross O.I
-      valuesList[21] = json[2].day_Volume;				// U	Volumn
-      
-      valuesList[22] = json[3].Contract_Month
-      valuesList[23] = json[3].day_Open_Price;			// V	Open
-      valuesList[24] = json[3].day_Daily_High;			// W	High
-      valuesList[25] = json[3].day_Daily_Low;			// X	Low
-      valuesList[26] = json[3].day_Settlement_Price;	// Y	Close
-      valuesList[27] = json[3].combined_Open_Interest;	// Z	Gross O.I
-      valuesList[28] = json[3].day_Volume;				// AA	Volumn
-      
-      
-      rangeList.setValues([valuesList]);
-      
-      sheet.getRange("A"+row).setValue(date);
+      return json[0].Contract_Month;
     }
   }
 }

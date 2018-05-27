@@ -55,8 +55,8 @@ function run_downloadMarketData() {
     });
     
     if (is_DailyMartketReport_triger){ 
+      var contractMonth = HSIF.addExcel_trigger(date); 
       isAddDateList = addDateList(date); //re-runable
-      HSIF.addExcel_trigger(date); //re-runable
       DailyMartketReport_triger(date); 
       DailyReport_Trigger();
       
