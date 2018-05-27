@@ -20,8 +20,7 @@ var HSIF = {
     return HSIF.addExcel(date);
   },
   addExcel: function(date) {
-    if(date == null || date == "") 
-      date = getLastTransactionDate();    
+    if(date == null || date == "") date = getLastTransactionDate();    
     var json = get_hsif_json(date);
     
     if(json != null){

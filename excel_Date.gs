@@ -6,12 +6,15 @@ function getContractMonthInfoList(){
     var rangeList = sheet.getRange('A2:C');
     
     this.cacheGetContractMonthInfoList = rangeList.getValues()
-      .map(function(v,index, arr) { return {  //convert to obj
-        contract: v[0], 
-        dateEnd:  v[1], 
-        dateList: v[2] == ""? []: v[2].split(','),
-        sheetRow:  index + 2         
-      }})
+      .map(function(v,index, arr) { 
+        var dateList = v[2] == ""? []: v[2].split(',');
+        return {  //convert to obj
+          contractMonth: v[0],
+          dateEnd:  v[1],
+          date1st:  dateList[0] || "",
+          dateList: dateList,
+          sheetRow:  index + 2         
+        }})
      .filter( function(val) {return val.dateEnd != ""} ); // filter out those Expiry Day 結算日 is empty
   }
   return this.cacheGetContractMonthInfoList;
@@ -28,6 +31,17 @@ function findContractMonthInfoByDate(targetDate){
   for (var i = 1; i < v.length; i++) {
     if(targetDate <= v[i].dateEnd)
       return v[i];
+  }
+  return null;
+}
+
+function findContractMonthInfoByMonth(targetMonth){
+  if(targetMonth && typeof targetMonth == "string" && targetMonth.length == 7 ){ //2017-12
+    var v= getContractMonthInfoList();
+    for (var i = 1; i < v.length; i++) {
+      if(targetMonth == v[i].contractMonth)
+        return v[i];
+    }
   }
   return null;
 }
@@ -50,9 +64,9 @@ function addDateList(date){
     //update  "Last Transaction Date"
     sheet.getRange('D2').setValue(date);
   }
-  
   return true;
 }
+
 function getLastTransactionDate(){
   var sheet = getSheetByName('date');
   return sheet.getRange('D2').getValue();
@@ -64,7 +78,9 @@ function getContractYearMonth_test(date){
 function getContractYearMonth_currStr(date){
   return getContractYearMonths_json(date, true);
 }  
-function getContractYearMonths_json(date, isCurrStr){
+
+//this shd be handle in HSIF
+function getContractYearMonths_json(date, isStr){
   var sheet = getSheetByName('date');
   var target_row = findTargetRow(date);
   var rangeList = sheet.getRange('A' + target_row + ':A'+ (target_row +2) );
@@ -74,7 +90,7 @@ function getContractYearMonths_json(date, isCurrStr){
   var str_next  = list_str[1][0];
   var str_next2 = list_str[2][0];
   
-  if(isCurrStr) {return str_curr;}
+  if(isStr) {return str_curr;}
   
   var contracts = {
     curr:  { year: str_curr.substr(2,2),  month: str_curr.substr(5,2)  },
@@ -96,35 +112,7 @@ function getDate_Next(date){
   } catch (e) { errorLog(e); return "failed" + e.message + ";" + e.fileName + "(" + e.lineNumber + ")"}
 }
 
-function getDate_firstdateOfMonth_test(){ return getContractYearMonthInfo_byMonth("2017-12") }
 
-function getDate_firstdateOfMonth_byDate(date){ 
-  var month = getContractYearMonth_currStr(date);
-  return getContractYearMonthInfo_byMonth(month) 
-}
-function getContractYearMonthInfo_byMonth(month){
-  try{  
-    if(month && typeof month == "string" && month.length == 7 ){ //2017-12
-      var sheet = getSheetByName('date');
-      var rangeList = sheet.getRange('A3:C');
-      var valuesList = rangeList.getValues(); 
-      var returnValue = {};
-      
-      valuesList.forEach(function(r){
-        if(r[0] == month){
-          returnValue.month = r[0];
-          returnValue.day_last = r[1];
-          returnValue.day_first = r[2].split(',')[0];
-          returnValue.day_list = r[2].split(',');
-        }
-      })
-      
-      return returnValue;
-    }
-//    logError(message, fileName, lineNumber);
-    return "";
-  } catch (e) { errorLog(e); return "failed" + e.message + ";" + e.fileName + "(" + e.lineNumber + ")"}
-}
 function getDateNowStr(){
   var d = new Date();
   var dd = ""+

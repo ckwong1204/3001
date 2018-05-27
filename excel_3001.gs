@@ -175,7 +175,7 @@ function setFormulas_3001_1stDay(sheet, row, dataDate){
   else{
     //set 1st交易日 by 結算日
     var date_Last = sheet.getRange('C'+row).getValue();
-    var date_1st = getDate_firstdateOfMonth_byDate(date_Last).day_first;
+    var date_1st = findContractMonthInfoByDate(date_Last).date1st;
     /* B "1st交易日"      */ sheet.getRange('B'+row).setValue( date_1st );
     
     dataDate = date_1st;
