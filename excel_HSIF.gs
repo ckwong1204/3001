@@ -4,7 +4,9 @@ function HSIF_getRange_json_test(){      HSIF.getRange_json('171229', '180112');
 function HSIF_getDate_test(){            HSIF.getHSIF(); }
 function HSIF_getHSIF() { return HSIF.getHSIF()}
 var HSIF = {
+  
   cacheHSIF: null,
+  
   getHSIF: function(){
     if(!this.cacheHSIF){
       var sheet = getSheetByName('HSIF');
@@ -54,7 +56,7 @@ var HSIF = {
     console.log(range)
   },
   getDate: function (date) {
-  	return this.cacheHSIF[date];
+  	return HSIF.getHSIF()[date];
   },
 
   addExcel_trigger: function(date) {

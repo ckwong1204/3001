@@ -206,7 +206,7 @@ function getfileByName(zipFileName) {
       var file = unZippedfile[0];
       var fileContext = file.getDataAsString();
       try{
-        cache.put(zipFileName, fileContext)
+        cache.put(zipFileName, fileContext);
       }catch(e){
         fileByNameCache[zipFileName] = fileContext;
       }
