@@ -1,4 +1,4 @@
-function calc_3001_obj ( date ){
+function getModel3001Base ( date ){
   var  returnObj = {};
   try{
     Logger.log("\n\n trigered calc_3001_obj(" + date+ ") ------------------------------------\n" );
@@ -67,6 +67,9 @@ function calc_3001_obj ( date ){
 
     returnObj["hsif_date1st"] = hsif_date1st;
     returnObj["hsif_ongoingDate"] = hsif_ongoingDate;
+    
+    returnObj["strike_curr"] = strike_curr;
+    returnObj["strike_next"] = strike_next;
 
     returnObj["hsio_date1st_curr_C"] = hsio_date1st_curr_C;
     returnObj["hsio_date1st_curr_P"] = hsio_date1st_curr_P;
@@ -81,29 +84,43 @@ function calc_3001_obj ( date ){
   return returnObj;
 }
 
+function getModel3001(){
+  var m3001 = getModel3001Base();
+  m3001["VI"] = {
+    value: 0,
+    node: m3001.hsio_ongoingDate_next_C.hsio.OQP_CLOSE + "+"+ m3001.hsio_ongoingDate_next_P.hsio.OQP_CLOSE
+    +"-ABS("+ m3001.hsif_ongoingDate.curr.day_Settlement_Price +"-"+  m3001.strike_next +")-("
+    +m3001.hsio_date1st_next_C.hsio.OQP_CLOSE + "+"+ m3001.hsio_date1st_next_P.hsio.OQP_CLOSE
+    +"-ABS("+ m3001.hsif_date1st.curr.day_Settlement_Price +"-"+  m3001.strike_curr +"))"
+
+  }
+  
+  return m3001;
+}
 
 
 
 
-// /* A                                 */   //formulaR1C1List[ 0] = ;
-// /* B "1st交易日"                      */   formulaR1C1List[ 1] = "=VLOOKUP(R[-1]C[1],HSIF!C[-1]:C[13],2,false)";;
-// /* C "結算日 d/m/Y"                   */   //formulaR1C1List[ 2] = ;
-// /* D "IV spread"                     */   formulaR1C1List[ 3] = "=R[0]C[9]+R[0]C[11]-ABS(R[0]C[2]-R[0]C[4]) -(R[0]C[5]+R[0]C[7]-ABS(R[0]C[1]-R[0]C[3]))";
-// /* E "1st交易日 即月 HSIF:"            */   formulaR1C1List[ 4] = "=VLOOKUP(R[0]C[-3],HSIF!C1:C15,6,FALSE)";
-// /* F "1st交易日 下月 HSIF:"            */   formulaR1C1List[ 5] = "=VLOOKUP(R[0]C[-4],HSIF!C1:C15,13,FALSE)";
-// /* G "即月ATM 行使價:"                 */   formulaR1C1List[ 6] = "=getClosestStrikePrice(R[0]C[-2])";
-// /* H "下月ATM 行使價:"                 */   formulaR1C1List[ 7] = "=getClosestStrikePrice(R[0]C[-2])";
-// /* I "1st交易日 即月 Call"             */   //formulaR1C1List[ 8] = ;
-// /* J "結算日 即月 Call"                */   formulaR1C1List[ 9] = "=IF(R[0]C[7]>R[0]C[-3],R[0]C[7]-R[0]C[-3],0)";
-// /* K "1st交易日 即月 Put"              */   //formulaR1C1List[10] = ;
-// /* L "結算日 即月 Put"                 */   formulaR1C1List[11] = "=IF(R[0]C[5]<R[0]C[-5],R[0]C[-5]-R[0]C[5],0)";
-// /* M "1st交易日 下月 Call"             */   //formulaR1C1List[12] = ;
-// /* N "結算日 下月 Call"                */   //formulaR1C1List[13] = ;
-// /* O "1st交易日 下月 Put"              */   //formulaR1C1List[14] = ;
-// /* P "結算日 下月 Put"                 */   //formulaR1C1List[15] = ;
-// /* Q "結算日 即月 HSIF"                */   formulaR1C1List[16] = "=VLOOKUP(R[0]C[-14],HSIF!C1:C15,6,FALSE)";
-// /* R "結算日 下月 HSIF"                */   formulaR1C1List[17] = "=VLOOKUP(R[0]C[-15],HSIF!C1:C15,13,FALSE)";
-// /* S "IVB:<400 A:400-580 C:>580"     */   formulaR1C1List[18] = "=IF(R[0]C[-15]<400, \"B\", IF(R[0]C[-15]>580, \"C\", \"A\") )";
-// /* T "A:L即ATM both S下ATM both x2"   */   formulaR1C1List[19] = "=IF(R[0]C[-1]=\"A\", (R[0]C[-10]-R[0]C[-11] + R[0]C[-8]-R[0]C[-9] ) + (R[0]C[-7]-R[0]C[-6] + R[0]C[-5]-R[0]C[-4])*2,\" \")";
-// /* U "B:S即ATM both L下ATM both x2"   */   formulaR1C1List[20] = "=IF(R[0]C[-2]=\"B\", - (R[0]C[-11]-R[0]C[-12] + R[0]C[-9]-R[0]C[-10] ) - (R[0]C[-8]-R[0]C[-7] + R[0]C[-6]-R[0]C[-5])*2,\" \")";
-// /* V "C:S即ATM both x2 L下ATM both x2"*/   formulaR1C1List[21] = "=IF(R[0]C[-3]=\"C\", - (R[0]C[-12]-R[0]C[-13] + R[0]C[-10]-R[0]C[-11] )*2 - (R[0]C[-9]-R[0]C[-8] + R[0]C[-7]-R[0]C[-6])*2,\" \")";
+
+// /* A                                 */   [ 0] 
+// /* B "1st交易日"                      */   [ 1] 180430
+// /* C "結算日 d/m/Y"                   */   [ 2] 180530
+// /* D "IV spread"                     */   [ 3] =M_+O_-ABS(F_-H_) -(I_+K_-ABS(E_-G_))
+// /* E "1st交易日 即月 HSIF:"            */   [ 4] =INT(VLOOKUP("180430",HSIF!$A:$O,6,FALSE))
+// /* F "1st交易日 下月 HSIF:"            */   [ 5] =INT(VLOOKUP("180430",HSIF!$A:$O,13,FALSE))
+// /* G "即月ATM 行使價:"                 */   [ 6] =INT(getClosestStrikePrice(E_))
+// /* H "下月ATM 行使價:"                 */   [ 7] =INT(getClosestStrikePrice(F_))
+// /* I "1st交易日 即月 Call"             */   [ 8] 604
+// /* J "結算日 即月 Call"                */   [ 9] 205
+// /* K "1st交易日 即月 Put"              */   [10] 542
+// /* L "結算日 即月 Put"                 */   [11] 157
+// /* M "1st交易日 下月 Call"             */   [12] 789
+// /* N "結算日 下月 Call"                */   [13] 546
+// /* O "1st交易日 下月 Put"              */   [14] 834
+// /* P "結算日 下月 Put"                 */   [15] 613
+// /* Q "結算日 即月 HSIF"                */   [16] =VLOOKUP("180525",HSIF!$A:$O,6,FALSE)
+// /* R "結算日 下月 HSIF"                */   [17] =VLOOKUP("180525",HSIF!$A:$O,13,FALSE)
+// /* S "IVB:<400 A:400-580 C:>580"     */   [18] =IF(D_<400, "B", IF(D_>580, "C", "A") )
+// /* T "A:L即ATM both S下ATM both x2"   */   [19] =IF(S_="A", (J_-I_ + L_-K_ ) + (M_-N_ + O_-P_)*2," ")
+// /* U "B:S即ATM both L下ATM both x2"   */   [20] =IF(S_="B", - (J_-I_ + L_-K_ ) - (M_-N_ + O_-P_)*2," ")
+// /* V "C:S即ATM both x2 L下ATM both x2"*/   [21] =IF(S_="C", - (J_-I_ + L_-K_ )*2 - (M_-N_ + O_-P_)*2," ")
