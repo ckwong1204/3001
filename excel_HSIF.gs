@@ -1,19 +1,60 @@
 function HSIF_test_addExcel_trigger(){   HSIF.addExcel_trigger('180525'); }
 function HSIF_test_addExcel(){           HSIF.addExcel('180525'); }
 function HSIF_getRange_json_test(){      HSIF.getRange_json('171229', '180112'); }
-function HSIF_getDate_test(){            HSIF.getDate(); }
-
+function HSIF_getDate_test(){            HSIF.getHSIF(); }
+function HSIF_getHSIF() { return HSIF.getHSIF()}
 var HSIF = {
+  cacheHSIF: null,
+  getHSIF: function(){
+    if(!this.cacheHSIF){
+      var sheet = getSheetByName('HSIF');
+      var result = {};
+      sheet.getDataRange().getValues().forEach(function(v){
+        if( v[0] != "" ||  v[0] != "Date")
+          result[v[0]] = {date:v[0],
+                         curr:{ contract_Month: v[1],
+                               day_Open_Price: v[2], 
+                               day_Daily_High: v[3], 
+                               day_Daily_Low: v[4], 
+                               day_Settlement_Price: v[5], 
+                               combined_Open_Interest: v[6], 
+                               day_Volume: v[7]              },
+                         next:{  contract_Month: v[8],
+                               day_Open_Price: v[9], 
+                               day_Daily_High: v[10], 
+                               day_Daily_Low: v[11], 
+                               day_Settlement_Price: v[12], 
+                               combined_Open_Interest: v[13], 
+                               day_Volume: v[14]             },
+                         next2:{ contract_Month: v[15],
+                                day_Open_Price: v[16], 
+                                day_Daily_High: v[17], 
+                                day_Daily_Low: v[18], 
+                                day_Settlement_Price: v[19], 
+                                combined_Open_Interest: v[20], 
+                                day_Volume: v[21]              },
+                         next3:{ contract_Month: v[22],
+                                day_Open_Price: v[23], 
+                                day_Daily_High: v[24], 
+                                day_Daily_Low: v[25], 
+                                day_Settlement_Price: v[26], 
+                                combined_Open_Interest: v[27], 
+                                day_Volume: v[28]              }
+                        };
+      })
+      this.cacheHSIF = result;
+    }
+    return this.cacheHSIF;
+  },
   
   getRange_json: function (dateFrom, dateEnd) {
   	var sheet = getSheetByName('HSIF');
-//    var range = sheet.getRange('A:A').getValues();
     var values = sheet.getDataRange().getValues();
 
     console.log(range)
   },
-  getDate: function (argument) {
-  	// body...
+  getDate: function (date) {
+  	return this.cacheHSIF[date];
   },
 
   addExcel_trigger: function(date) {

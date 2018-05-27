@@ -1,5 +1,8 @@
 
 var cacheGetContractMonthInfoList=null;
+function clearCacheContractMonthInfoList(){
+  this.cacheGetContractMonthInfoList=null
+}
 function getContractMonthInfoList(){
   if(!this.cacheGetContractMonthInfoList){
     var sheet = getSheetByName('date');
@@ -59,7 +62,8 @@ function addDateList(date){
   
   if( contractMonthInfo.dateList.indexOf(date) == -1){
     var newDateStr = contractMonthInfo.dateList.concat(date).sort().join();
-    sheet.getRange('C' + contractMonthInfo.sheetRow).setValue(newDateStr)
+    sheet.getRange('C' + contractMonthInfo.sheetRow).setValue(newDateStr);
+    clearCacheContractMonthInfoList();
     
     //update  "Last Transaction Date"
     sheet.getRange('D2').setValue(date);

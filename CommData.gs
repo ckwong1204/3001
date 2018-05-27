@@ -80,4 +80,14 @@ function getClosestStrikePrice(goal){
   });
   return closest;
 }
+function convertmmm_yyTOyyyy_mm_test(){ convertmmm_yyTOyyyy_mm("FEB-18") }
 
+function convertmmm_yyTOyyyy_mm(date){
+  if(date && typeof date == "string" && date.length == 6 ){
+    var mmm = date.split(/[^\d\w]/)[0];
+    var yy = date.split(/[^\d\w]/)[1];
+    return "20" + yy + "-" + CommonData.Month[mmm];
+  }
+  console.error("CommData", "return null at convertmmm_yyTOyyyy_mm");
+  return null;
+}
