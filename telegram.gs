@@ -22,7 +22,7 @@ function setWebHook() {
 }
 
 function sendMessage(id, text) {
-  var response = UrlFetchApp.fetch(url + "/sendMessage?chat_id=" + id + "&text=" + text);
+  var response = UrlFetchApp.fetch(url + "/sendMessage?chat_id=" + id + "&text=" + encodeURI(text) );
   Logger.log(response.getContentText());
 }
 
@@ -38,14 +38,29 @@ function doPost(e){
   var id   = contents.message.from.id;
   var username = contents.message.from.username;
   
-  sendMessage( id , "hi, "+ username )
+  if(id == "212470449"){
+    sendMessage( id , "hi, "+ username );
+  }
   
   getSheetByName('Errors').appendRow([getDateNowStr(), id,username,text, contents]);
 }
 
-function textTelegramText(){
- sendMessage ("212470449", "1111111");
+function textTelegramText(text){
+ sendMessage ("212470449", text);
 
+}
+
+
+function replaceSpecialwords(){
+//  Only the tags mentioned above are currently supported.
+//Tags must not be nested.
+//All <, > and & symbols that are not a part of a tag or an HTML entity must be replaced with the corresponding HTML entities (< with &lt;, > with &gt; and & with &amp;).
+//All numerical HTML entities are supported.
+//The API currently supports only the following named HTML entities: &lt;, &gt;, &amp; and &quot;.
+  
+//  < with &lt;, > with &gt; and & with &amp;
+  
+  
 }
   
   /*  
