@@ -46,6 +46,13 @@
   https://script.google.com/macros/s/AKfycbz9UGqubdHFUBaLt9Awsa057aFVPowQU6DOs9gXbbzC/dev?a=get&callback=callback<br>
 
   <br><textarea rows="4" style="width:  calc(100vw - 20px);">
+  var m3001 = {};
+  google.script.run.withFailureHandler(function(err) {console.log(err);}).withSuccessHandler(function(response) {
+      console.log(JSON.stringify(response)); console.log(response); m3001=response; 
+  }).getModel3001(); 
+  </textarea>
+
+  <br><textarea rows="4" style="width:  calc(100vw - 20px);">
   var result = {};
   google.script.run.withFailureHandler(function(err) {console.log(err);}).withSuccessHandler(function(response) {
       console.log(JSON.stringify(response)); console.log(response); result=response; 

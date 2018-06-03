@@ -1,17 +1,10 @@
-//set get range
-
-//add trigger
-
-
 function calc_3001_test(){
-//  calc_3001(80);
   calc_3001(84);
 }
 
 function formular_test(){
   row = 106;
   var sheet = getSheetByName('3001');
-  //  setFormulas_3001_1stDay(sheet, row);
   setFormulas_3001_endDay(sheet, row);
 }
 
@@ -43,7 +36,6 @@ function DailyMartketReport_triger(date){
       var date_1st = valuesList[i][0]; /* B "1st交易日"                      */  
       var date_end = valuesList[i][1]; /* C "結算日 d/m/Y"                   */
       if(date_1st == ""){
-        //      /* B "1st交易日"*/ sheet.getRange('B'+(target_row + i)).setFormula("=VLOOKUP(R[-1]C[1],HSIF!C[-1]:C[13],2,false)");
         target_row += i;
         break;
       }
@@ -62,25 +54,6 @@ function DailyMartketReport_triger(date){
     
   } catch (e) { errorLog(e); return "failed" + e.message + ";" + e.fileName + "(" + e.lineNumber + ")"}
 }
-///**
-// * get HSIO
-// * @param {18-Sep-17} str
-// * @return {"170918"} date
-// *
-// * @customfunction
-// */
-//function toDate_dd_MMM_yy(str) {
-////    var str = "31-Mar-17";
-//  var date = str.split('-')[0];
-//  var Month = str.split('-')[1];
-//  var year = str.split('-')[2];
-//  return year + CommonData.Month[Month.toUpperCase()] + (date.length == 1 ? "0" + date : date);
-////  var a =  year + CommonData.Month[Month.toUpperCase()] + (date.length == 1 ? "0" + date : date);
-////  return a;
-//}
-
-
-
 
 /**
  * get calc_3001
@@ -153,18 +126,6 @@ function calc_3001 ( row, date){
     
   } catch (e) { errorLog(e); return "failed" + e.message + ";" + e.fileName + "(" + e.lineNumber + ")"}
   return "success";
-}
-
-function getDate(date_diff){
-  //new Date().toLocaleString("en-US", {timeZone: "Asia/Hong_Kong"}) //Asia/Hong_Kong
-  var d = new Date();
-  d.setDate(d.getDate() + date_diff);
-  
-  var dd = d.getDate();
-  var mm = d.getMonth()+1; //January is 0!
-  var yyyy = d.getFullYear();
-  
-  return "" + yyyy%100 + (mm < 10 ? "0"+ mm : mm) + (dd < 10 ? "0"+ dd : dd);
 }
 
 function setFormulas_3001_1stDay(sheet, row, dataDate){
