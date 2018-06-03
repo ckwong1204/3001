@@ -5,8 +5,6 @@ var url = "https://api.telegram.org/bot" + token;
 var webAppUrl    = "https://script.google.com/macros/s/AKfycbxKcVkaCnsGDO_0CB0uw8P_qMOqlsITNRTZeK0wHWoJRrC7NOWG/exec";
 //var webAppUrldev = "https://script.google.com/macros/s/AKfycbyzY9alKolkmDbsW7MgtwteILaLOOXsdjwkeUPtyWp6/dev"
 
-
-
 function getMe() {
   var response = UrlFetchApp.fetch(url + "/getMe");
   Logger.log(response.getContentText());
@@ -34,8 +32,8 @@ function sendMessage(id, text) {
 
 
 function doPost(e){
-//  GmailApp.sendEmail(Session.getEffectiveUser().getEmail(),"Telegram Bot Update",JSON.stringify(e,null,4));
-//  logError("Telegram", JSON.stringify(e,null,4) , "");
+  //  GmailApp.sendEmail(Session.getEffectiveUser().getEmail(),"Telegram Bot Update",JSON.stringify(e,null,4));
+  //  logError("Telegram", JSON.stringify(e,null,4) , "");
   //  logError("Telegram", JSON.stringify(contents,null,4) , "");
   
   var contents = JSON.parse(e.postData.contents);
@@ -69,7 +67,10 @@ function textTelegramText_test(text){
 function replaceSpecialwords(){
 //  Only the tags mentioned above are currently supported.
 //Tags must not be nested.
-//All <, > and & symbols that are not a part of a tag or an HTML entity must be replaced with the corresponding HTML entities (< with &lt;, > with &gt; and & with &amp;).
+//All <, > and & symbols that are not a part of a tag or an HTML entity must be replaced with the corresponding HTML entities (
+//< with &lt;
+//> with &gt;
+//& with &amp;
 //All numerical HTML entities are supported.
 //The API currently supports only the following named HTML entities: &lt;, &gt;, &amp; and &quot;.
   

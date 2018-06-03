@@ -1,6 +1,4 @@
-function changeStr(description, oldValue, newValue){
-  return "" + description +": "+ oldValue +" -> "+ newValue + "\n";
-}
+
 
 function dailyTelegramUpdate(){
   var m3001 = getModel3001();

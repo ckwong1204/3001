@@ -4,7 +4,6 @@ function getModel3001Base ( date ){
     Logger.log("\n\n trigered calc_3001_obj(" + date+ ") ------------------------------------\n" );
     if(!date){ var date = getLastTransactionDate(); }
     
-    
     //set 1st交易日 by 結算日
     var contractMonthInfoByDate = findContractMonthInfoByDate(date);
    
@@ -28,7 +27,8 @@ function getModel3001Base ( date ){
     var next_C_str = '-' + CommonData.Month[contract.next.month] + "-" + contract.next.year + "-" + strike_next + "-" + "C";
     var next_P_str = '-' + CommonData.Month[contract.next.month] + "-" + contract.next.year + "-" + strike_next + "-" + "P";
     
-    if (date1st  <=  date) { // if current Date >= 第一交易日
+    if (date1st  <=  date) { // if 第一交易日 <= current Date 
+      //for prices in the 1st date
       var data_1st = get_hsio_json(date1st, contracts);
       if(get_hsio_json){
         var hsio_date1st_curr_C = {   value: data_1st[ date1st + curr_C_str ], date: date1st, note: curr_C_str } // I: 1st交易日 即月 Call  date1st + CommonData.Month[contract.curr.month] + "-" + contract.curr.year + "-" + strike_curr + "-" + "C"
@@ -36,16 +36,13 @@ function getModel3001Base ( date ){
         var hsio_date1st_next_C = {   value: data_1st[ date1st + next_C_str ], date: date1st, note: next_C_str } // M: 1st交易日 下月 Call  date1st + CommonData.Month[contract.next.month] + "-" + contract.next.year + "-" + strike_next + "-" + "C"
         var hsio_date1st_next_P = {   value: data_1st[ date1st + next_P_str ], date: date1st, note: next_P_str } // O: 1st交易日 下月 Put   date1st + CommonData.Month[contract.next.month] + "-" + contract.next.year + "-" + strike_next + "-" + "P"      
       }
-    }
-    
 
-    if (date1st <= date ) { // if 第一交易日 <= current Date 
+      //for price after the 1st date
       var dateMov = date; 
       if( dateMov > dateEnd){ dateMov = dateEnd; }     // if current Date > 結算日 , set dateMov = 結算日
-      
-      var hsif_dateMov    = HSIF.getDate(dateMov);
-
+      var hsif_dateMov = HSIF.getDate(dateMov);
       var data_dateMov = get_hsio_json(dateMov, contracts);
+
       if(data_dateMov){
          var hsio_dateMov_curr_C = { value: data_dateMov[ dateMov + curr_C_str ], date: dateMov, note: curr_C_str } /* J "結算日 即月 Call"               */
          var hsio_dateMov_curr_P = { value: data_dateMov[ dateMov + curr_P_str ], date: dateMov, note: curr_P_str } /* L "結算日 即月 Put"                */
@@ -88,12 +85,18 @@ function getModel3001(inputDate){
   
   var hsif_date1st_curr_close = parseInt(m3001.hsif_date1st.curr.day_Settlement_Price); /* E "1st交易日 即月 HSIF:"            */
   var hsif_date1st_next_close = parseInt(m3001.hsif_date1st.next.day_Settlement_Price); /* F "1st交易日 下月 HSIF:"            */
-  var hsif_dateMov_curr_close = parseInt(m3001.hsif_dateMov.curr.day_Settlement_Price);
-  var hsif_dateMov_next_close = parseInt(m3001.hsif_dateMov.next.day_Settlement_Price);
+  var hsif_dateMov_curr_close = parseInt(m3001.hsif_dateMov.curr.day_Settlement_Price); /* Q "結算日 即月 HSIF"                */
+  var hsif_dateMov_next_close = parseInt(m3001.hsif_dateMov.next.day_Settlement_Price); /* R "結算日 下月 HSIF"                */
   
   var strike_curr = m3001.strike_curr;   // G: 即月 行使價
   var strike_next = m3001.strike_next;   // H: 下月 行使價
 
+  // adjust the the price if the contract end day
+  if (dateMov == dateEnd) {
+    m3001.hsio_dateMov_curr_C.value.OQP_CLOSE = hsif_dateMov_curr_close > strike_curr ? hsif_dateMov_curr_close - strike_curr : 0; //=IF(INT(Q)>INT(G),Q-G,0)
+    m3001.hsio_dateMov_curr_P.value.OQP_CLOSE = hsif_dateMov_curr_close < strike_curr ? strike_curr - hsif_dateMov_curr_close : 0; //=IF(INT(Q)<INT(G),G-Q,0)
+  }
+  
   var hsio_date1st_curr_C_Close = parseInt(m3001.hsio_date1st_curr_C.value.OQP_CLOSE); /* I "1st交易日 即月 Call"             */
   var hsio_date1st_curr_P_Close = parseInt(m3001.hsio_date1st_curr_P.value.OQP_CLOSE); /* K "1st交易日 即月 Put"              */
   var hsio_date1st_next_C_Close = parseInt(m3001.hsio_date1st_next_C.value.OQP_CLOSE); /* M "1st交易日 下月 Call"             */
@@ -102,6 +105,7 @@ function getModel3001(inputDate){
   var hsio_dateMov_curr_P_Close = parseInt(m3001.hsio_dateMov_curr_P.value.OQP_CLOSE); /* L "結算日 即月 Put"                 */
   var hsio_dateMov_next_C_Close = parseInt(m3001.hsio_dateMov_next_C.value.OQP_CLOSE); /* N "結算日 下月 Call"                */
   var hsio_dateMov_next_P_Close = parseInt(m3001.hsio_dateMov_next_P.value.OQP_CLOSE); /* P "結算日 下月 Put"                 */
+
   
   
   m3001["VI"] = { /* D "IV spread"                     */
@@ -166,7 +170,7 @@ function getModel3001(inputDate){
 }
 
 
-// /* A Contract Month                  */   [ 0] 
+// /* A Contract Month                  */   [ 0]  
 // /* B "1st交易日"                      */   [ 1] 180430
 // /* C "結算日 d/m/Y"                   */   [ 2] 180530
 // /* D "IV spread"                     */   [ 3] =M_+O_-ABS(F_-H_) -(I_+K_-ABS(E_-G_))

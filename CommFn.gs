@@ -18,3 +18,7 @@ function getDateNowStr(){
       ("0" + d.getSeconds()).slice(-2);
   return dd;
 }
+
+function changeStr(description, oldValue, newValue){
+  return "" + description +": "+ oldValue +" -> "+ newValue + "\n";
+}

@@ -192,8 +192,7 @@ function getfileByName_test() {
 var FOLDER_ID = '0BytahsRby1tEZC1fUjY3Z3Z2QzA'; // AutoDownloadData
 var fileByNameCache = {};
 function getfileByName(zipFileName) {
-  var cache = CacheService.getDocumentCache();
-  var cached = cache.get(zipFileName) || fileByNameCache[zipFileName];
+  var cached = fileByNameCache[zipFileName] || CacheService.getDocumentCache().get(zipFileName) ;
 
   if(cached == null){
     var theFolder = DriveApp.getFolderById(FOLDER_ID);
@@ -206,9 +205,11 @@ function getfileByName(zipFileName) {
       var file = unZippedfile[0];
       var fileContext = file.getDataAsString();
       try{
-        cache.put(zipFileName, fileContext);
-      }catch(e){
         fileByNameCache[zipFileName] = fileContext;
+        CacheService.getDocumentCache().put(zipFileName, fileContext);
+      }catch(e){ 
+        e["getfileByName"] = zipFileName; 
+        console.log(e); 
       }
       return fileContext;
     }
