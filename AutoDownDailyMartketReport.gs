@@ -43,33 +43,40 @@ function get_HKEX_Url(hkexType, date){
 //---=---=---=---=---=---=---=---=---=---=---=---=---=
 
 // download Market Data - Daily Market Report
+var is_DailyMartketReport_triger = false;
+var is_DailyMartketReport_triger_count = 1;
+
 function run_downloadMarketData() {
   try{
     var date = getDate_str(0);
-    var is_DailyMartketReport_triger = false;
     
-    //  uploadFile(get_HKEX_Url(hkexTypeMap.stockOption, date));
     Object.keys(hkexTypeMap).forEach(function(key){
       var ifSuccess = uploadFile(get_HKEX_Url(hkexTypeMap[key], date));
-      if(key == 'hsio' && ifSuccess) { is_DailyMartketReport_triger = true; }
+      if(key == 'hsio' && ifSuccess) { this.is_DailyMartketReport_triger = true; }
     });
     
-    if (is_DailyMartketReport_triger){ 
+    if (this.is_DailyMartketReport_triger){
       var contractMonth = HSIF.addExcel_trigger(date); 
       isAddDateList = addDateList(date); //re-runable
       DailyMartketReport_triger(date); 
       DailyReport_Trigger();
-      
-    }
+      dailyTelegramUpdate();
+    }    
   } catch (e) { 
     errorLog(
       "run_downloadMarketDat failed",
-      
       "failed" + e.message + ";" + e.fileName + "(" + e.lineNumber + ")"
     );
   }
   
   sendEmail(date);
+  
+  if(!this.is_DailyMartketReport_triger && is_DailyMartketReport_triger_count<7 ){
+     this.is_DailyMartketReport_triger_count ++;
+      Utilities.sleep(20*60*1000);
+      logError(this.is_DailyMartketReport_triger_count, "trail run run_downloadMarketData()");
+      run_downloadMarketData();
+  }
 }
 
 /**
@@ -88,11 +95,6 @@ function uploadFile(url) {
     Logger.log('get url fail: "%s"', url);
     return false;
   }
-}
-function loopURL_test(){
-  
-    
-  
 }
 
 function loopURL(){
@@ -160,6 +162,16 @@ function getNextTransactionDate(yymmdd){
 }
 
 
-
-
+var is_DailyMartketReport_triger = false;
+var i = 0;
+function testtimout(){
+  
+  
+ 
+  if(!this.is_DailyMartketReport_triger){
+     this.i ++;
+      Utilities.sleep(1*1000);
+      testtimout()
+  }
+}
 

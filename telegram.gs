@@ -1,4 +1,4 @@
-var token = "456425019:AAGPvI1Gi4LdD9zaOz9l9E0S2BuYefcJpDE";
+var token = "0";
 var url = "https://api.telegram.org/bot" + token;
 var webAppUrl    = "https://script.google.com/macros/s/AKfycbxKcVkaCnsGDO_0CB0uw8P_qMOqlsITNRTZeK0wHWoJRrC7NOWG/exec";
 //var webAppUrldev = "https://script.google.com/macros/s/AKfycbyzY9alKolkmDbsW7MgtwteILaLOOXsdjwkeUPtyWp6/dev"
@@ -22,8 +22,12 @@ function setWebHook() {
 }
 
 function sendMessage(id, text) {
-  var response = UrlFetchApp.fetch(url + "/sendMessage?chat_id=" + id + "&text=" + encodeURI(text) );
-  Logger.log(response.getContentText());
+  try{
+    var encodedText = encodeURIComponent((text));
+    var response = UrlFetchApp.fetch(url + "/sendMessage?chat_id=" + id + "&text=" + encodedText );
+    Logger.log(response.getContentText());
+    
+  } catch (e) { errorLog(e); return "failed" + e.message + ";" + e.fileName + "(" + e.lineNumber + ")"}
 }
 
 
@@ -36,20 +40,29 @@ function doPost(e){
   
   var text = contents.message.text;
   var id   = contents.message.from.id;
+  var chatId   = contents.message.chat.id;
   var username = contents.message.from.username;
   
-  if(id == "212470449"){
+  getSheetByName('Errors').appendRow([getDateNowStr(), id,username,text, contents]);
+  
+  if(chatId == "212470449"){
     sendMessage( id , "hi, "+ username );
   }
   
-  getSheetByName('Errors').appendRow([getDateNowStr(), id,username,text, contents]);
 }
 
-function textTelegramText(text){
- sendMessage ("212470449", text);
+function textTelegramText(text, chatId){
+  if(chatId == "group") chatId = 0;
+  else chatId = 0;
+  
+  sendMessage (chatId, text);
 
 }
 
+function textTelegramText_test(text){
+ textTelegramText ("detail in goo.gl/D5BJv2");
+
+}
 
 function replaceSpecialwords(){
 //  Only the tags mentioned above are currently supported.
