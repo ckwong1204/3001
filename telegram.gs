@@ -1,4 +1,6 @@
-var token = "0";
+var token = "456425019:AAGPvI1Gi4LdD9zaOz9l9E0S2BuYefcJpDE";
+var chatId_ck = "212470449";
+var chatId_group = "-297241281";
 var url = "https://api.telegram.org/bot" + token;
 var webAppUrl    = "https://script.google.com/macros/s/AKfycbxKcVkaCnsGDO_0CB0uw8P_qMOqlsITNRTZeK0wHWoJRrC7NOWG/exec";
 //var webAppUrldev = "https://script.google.com/macros/s/AKfycbyzY9alKolkmDbsW7MgtwteILaLOOXsdjwkeUPtyWp6/dev"
@@ -45,15 +47,15 @@ function doPost(e){
   
   getSheetByName('Errors').appendRow([getDateNowStr(), id,username,text, contents]);
   
-  if(chatId == "212470449"){
+  if(chatId == chatId_ck){
     sendMessage( id , "hi, "+ username );
   }
   
 }
 
 function textTelegramText(text, chatId){
-  if(chatId == "group") chatId = 0;
-  else chatId = 0;
+  if(chatId == "group") chatId = chatId_group;
+  else chatId = chatId_ck;
   
   sendMessage (chatId, text);
 
