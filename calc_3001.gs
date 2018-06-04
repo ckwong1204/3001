@@ -1,7 +1,7 @@
 function getModel3001Base ( date ){
   var  returnObj = {};
   try{
-    Logger.log("\n\n trigered calc_3001_obj(" + date+ ") ------------------------------------\n" );
+    Logger.log("\n\n trigered get Model 3001 Base(" + date+ ") ------------------------------------\n" );
     if(!date){ var date = getLastTransactionDate(); }
     
     //set 1st交易日 by 結算日
@@ -91,7 +91,7 @@ function getModel3001(inputDate){
   var strike_curr = m3001.strike_curr;   // G: 即月 行使價
   var strike_next = m3001.strike_next;   // H: 下月 行使價
 
-  // adjust the the price if the contract end day
+  // adjust OQP_CLOSE if the contract end day
   if (dateMov == dateEnd) {
     m3001.hsio_dateMov_curr_C.value.OQP_CLOSE = hsif_dateMov_curr_close > strike_curr ? hsif_dateMov_curr_close - strike_curr : 0; //=IF(INT(Q)>INT(G),Q-G,0)
     m3001.hsio_dateMov_curr_P.value.OQP_CLOSE = hsif_dateMov_curr_close < strike_curr ? strike_curr - hsif_dateMov_curr_close : 0; //=IF(INT(Q)<INT(G),G-Q,0)

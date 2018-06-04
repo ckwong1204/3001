@@ -23,7 +23,7 @@ function update3001excel(){
   var row_1st = range.getRow();
   var row_end = range.getLastRow();
   for (var i = row_1st; i <= row_end; i++){
-    calc_3001(i);
+    updateSheet3001Row(i);
   }
   SpreadsheetApp.getUi().alert(     'update3001excel: updated from row '+row_1st+' to ' + row_end     );
 }

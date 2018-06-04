@@ -33,7 +33,7 @@
 <div id="link" hidden> 
     <div>excel function:
     <input type="text" size="1" id="excel_row"   value="80">
-    <button type="button" onclick="init('calc_3001')"> 3001 excel </button>
+    <button type="button" onclick="init('updateSheet3001Row')"> 3001 excel </button>
     </div>
 
   <button type="button" onclick="init('get_hsio_json')"> json_console </button>
@@ -142,14 +142,14 @@ function get_dqe_csv(C_P) {
   }).get_dqe_csv(stockCode, date, year, month, strike, C_P);
 }
 
-function calc_3001() {
-  console.log("calc_3001");
+function updateSheet3001Row() {
+  console.log("updateSheet3001Row");
   var excel_row = $('#excel_row').val();
 
   result = {};
   google.script.run.withFailureHandler(function(err) { console.log(err); }).withSuccessHandler(function(response) {
     console.log(response);
-  }).calc_3001(excel_row);
+  }).updateSheet3001Row(excel_row);
 }
 
 function init(a,b) {
@@ -157,7 +157,7 @@ function init(a,b) {
   if (stockCode == 'HSI' && a == 'get_hsio_csv')    { get_hsio_csv(b); }
   if (stockCode != 'HSI' && a == 'get_hsio_csv')    { get_dqe_csv(b); }
   if (a == 'get_hsio_json')   { get_hsio_json(); }
-  if (a == 'calc_3001')       { calc_3001();    }
+  if (a == 'updateSheet3001Row')       { updateSheet3001Row();    }
   if (a == 'link')            { link();    }
 }
 
