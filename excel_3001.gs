@@ -121,14 +121,15 @@ function updateSheet3001Row ( row, date){
     sheet.getRange('N'+row).setValue( hsio_dateMov_next_C_Close ).setNote( ""+ m3001.hsio_dateMov_next_C.date + m3001.hsio_dateMov_next_C.note ); // N: 結算日 下月 Call  
     sheet.getRange('P'+row).setValue( hsio_dateMov_next_P_Close ).setNote( ""+ m3001.hsio_dateMov_next_P.date + m3001.hsio_dateMov_next_P.note ); // P: 結算日 下月 Put   
 
+    sheet.getRange('Q'+row).setValue(hsif_dateMov_curr_close);/* Q "結算日 即月 HSIF"       */
+    sheet.getRange('R'+row).setValue(hsif_dateMov_next_close);/* R "結算日 下月 HSIF"       */    
+    
     sheet.getRange('S'+row).setValue( hsio_date1st_curr_C_Close ); /* S "IV B:<400 A:400-580 C:>580"      */ 
     sheet.getRange('T'+row).setValue( m3001.model.A.value ).setNote(m3001.model.A.note) ; /* T "A:L即ATM both S下ATM both x2"   */
     sheet.getRange('U'+row).setValue( m3001.model.B.value ).setNote(m3001.model.B.note) ; /* U "B:S即ATM both L下ATM both x2"   */
     sheet.getRange('V'+row).setValue( m3001.model.C.value ).setNote(m3001.model.C.note) ; /* V "C:S即ATM both x2 L下ATM both x2"*/
 
-    sheet.getRange('W'+row).setValue( dataDate + " "+ getDateNowStr() );
-         
-    }
+    sheet.getRange('W'+row).setValue( dateMov + " "+ getDateNowStr() );
     
   } catch (e) { errorLog(e); return "failed" + e.message + ";" + e.fileName + "(" + e.lineNumber + ")"}
   return "success";
