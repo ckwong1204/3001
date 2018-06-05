@@ -103,6 +103,9 @@ var HSIF = {
         json[3].day_Volume
       ]);
       
+      //set last row to pain text
+      setRangeFormatAsPainText();
+      
       return json[0].Contract_Month;
     }
   }
@@ -165,3 +168,12 @@ Array.prototype.findListListIndex = function(search){
 
   return -1;
 } 
+
+
+function setRangeFormatAsPainText(){
+  var sheet = getSheetByName("HSIF"); 
+  var range = sheet.getRange("A" + sheet.getLastRow() +":AC"+ sheet.getLastRow());
+  range.setNumberFormat('@STRING@');
+  
+}
+

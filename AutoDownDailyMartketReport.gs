@@ -43,8 +43,8 @@ function get_HKEX_Url(hkexType, date){
 //---=---=---=---=---=---=---=---=---=---=---=---=---=
 
 // download Market Data - Daily Market Report
-var is_DailyMartketReport_triger = false;
-var is_DailyMartketReport_triger_count = 1;
+//var is_DailyMartketReport_triger = false;
+//var is_DailyMartketReport_triger_count = 1;
 
 function run_downloadMarketData() {
   try{
@@ -71,12 +71,12 @@ function run_downloadMarketData() {
   
   sendEmail(date);
   
-  if(!this.is_DailyMartketReport_triger && is_DailyMartketReport_triger_count<7 ){
-     this.is_DailyMartketReport_triger_count ++;
-      Utilities.sleep(20*60*1000);
-      logError(this.is_DailyMartketReport_triger_count, "trail run run_downloadMarketData()");
-      run_downloadMarketData();
-  }
+//  if(!this.is_DailyMartketReport_triger && is_DailyMartketReport_triger_count<7 ){
+//     this.is_DailyMartketReport_triger_count ++;
+//      Utilities.sleep(20*60*1000);
+//      logError(this.is_DailyMartketReport_triger_count, "trail run run_downloadMarketData()");
+//      run_downloadMarketData();
+//  }
 }
 
 /**
