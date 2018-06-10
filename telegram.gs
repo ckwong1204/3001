@@ -31,24 +31,25 @@ function sendMessage(id, text) {
 }
 
 
-function doPost(e){
-  //  GmailApp.sendEmail(Session.getEffectiveUser().getEmail(),"Telegram Bot Update",JSON.stringify(e,null,4));
-  //  logError("Telegram", JSON.stringify(e,null,4) , "");
-  //  logError("Telegram", JSON.stringify(contents,null,4) , "");
-  
-  var contents = JSON.parse(e.postData.contents);
-  
-  var text = contents.message.text;
-  var id   = contents.message.from.id;
-  var chatId   = contents.message.chat.id;
-  var username = contents.message.from.username;
-  
-  getSheetByName('Errors').appendRow([getDateNowStr(), id,username,text, contents]);
-  
-  if(chatId == chatId_ck){
-    sendMessage( id , "hi, "+ username );
-  }
-  
+function doPost(postMsg){
+  try{
+    //  GmailApp.sendEmail(Session.getEffectiveUser().getEmail(),"Telegram Bot Update",JSON.stringify(postMsg,null,4));
+    //  logError("Telegram", JSON.stringify(postMsg,null,4) , "");
+    //  logError("Telegram", JSON.stringify(contents,null,4) , "");
+    
+    var contents = JSON.parse(postMsg.postData.contents);
+    
+    var text = contents.message.text;
+    var id   = contents.message.from.id;
+    var chatId   = contents.message.chat.id;
+    var username = contents.message.from.username;
+    
+    getSheetByName('Errors').appendRow([getDateNowStr(), id,username,text, contents]);
+    
+    if(chatId == chatId_ck){
+      sendMessage( id , "hi, "+ username );
+    }
+  } catch (e) { errorLog(e);}
 }
 
 function textTelegramText(text, chatId){
