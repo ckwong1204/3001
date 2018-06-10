@@ -5,11 +5,11 @@ function getModel3001Base ( date ){
     if(!date){ var date = getLastTransactionDate(); }
     
     //set 1st交易日 by 結算日
-    var contractMonthInfoByDate = findContractMonthInfoByDate(date);
+    var contractMonthInfo = findContractMonthInfoByDate(date);
    
-    var contractMonth = contractMonthInfoByDate.contractMonth;
-    var date1st = contractMonthInfoByDate.date1st;
-    var dateEnd = contractMonthInfoByDate.dateEnd;
+    var contractMonth = contractMonthInfo.contractMonth;
+    var date1st = contractMonthInfo.date1st;
+    var dateEnd = contractMonthInfo.dateEnd;
     
     var hsif_date1st = HSIF.getDate(date1st);
     var hsif_date1st_curr_close = hsif_date1st.curr.day_Settlement_Price;
@@ -52,6 +52,7 @@ function getModel3001Base ( date ){
     }
 
     returnObj["date"] = date;
+    returnObj["contractMonthInfo"] = contractMonthInfo;
     returnObj["contractMonth"] = contractMonth;
     returnObj["date1st"] = date1st;
     returnObj["dateEnd"] = dateEnd;
@@ -192,3 +193,101 @@ function getModel3001(inputDate){
 // /* T "A:L即ATM both S下ATM both x2"   */   [19] =IF(S="A", (J-I + L-K ) + (M-N + O-P)*2," ")
 // /* U "B:S即ATM both L下ATM both x2"   */   [20] =IF(S="B", - (J-I + L-K ) - (M-N + O-P)*2," ")
 // /* V "C:S即ATM both L下ATM both"      */   [21] =IF(S="C", - (J-I + L-K ) - (M-N + O-P)," ")
+
+
+
+
+function getModel3001Month ( date ){
+  var  returnObj = {};
+  try{
+    Logger.log("\n\n trigered get Model 3001 Base(" + date+ ") ------------------------------------\n" );
+    if(!date){ var date = getLastTransactionDate(); }
+    
+    //set 1st交易日 by 結算日
+    var contractMonthInfo = findContractMonthInfoByDate(date);
+    var dateList = contractMonthInfo.dateList;
+
+    var contractMonth = contractMonthInfo.contractMonth;
+    var date1st = contractMonthInfo.date1st;
+    var dateEnd = contractMonthInfo.dateEnd;
+    
+    var hsif_date1st = HSIF.getDate(date1st);
+    var hsif_date1st_curr_close = hsif_date1st.curr.day_Settlement_Price;
+    var hsif_date1st_next_close = hsif_date1st.next.day_Settlement_Price;
+        
+    var strike_curr = getClosestStrikePrice(hsif_date1st_curr_close); // G: 即月 行使價
+    var strike_next = getClosestStrikePrice(hsif_date1st_next_close); // H: 下月 行使價
+    
+    var contract = getContractYearMonths_json(date);
+    var contracts = [{ year: contract.curr.year,  month: contract.curr.month,  strike: strike_curr, C_P: '.' },
+                     { year: contract.next.year,  month: contract.next.month,  strike: strike_next, C_P: '.' }];
+
+    var curr_C_str = '-' + CommonData.Month[contract.curr.month] + "-" + contract.curr.year + "-" + strike_curr + "-" + "C";
+    var curr_P_str = '-' + CommonData.Month[contract.curr.month] + "-" + contract.curr.year + "-" + strike_curr + "-" + "P";
+    var next_C_str = '-' + CommonData.Month[contract.next.month] + "-" + contract.next.year + "-" + strike_next + "-" + "C";
+    var next_P_str = '-' + CommonData.Month[contract.next.month] + "-" + contract.next.year + "-" + strike_next + "-" + "P";
+    
+    var allOptionFuture = [];
+    contractMonthInfo.dateList.forEach(function(yyyymmdd){
+      var hsio_json = get_hsio_json(yyyymmdd, contracts);
+      var dataObj = {
+        date : yyyymmdd,
+        hsif: HSIF.getDate(yyyymmdd),
+        curr_C: {   value: hsio_json[ yyyymmdd + curr_C_str ], date: yyyymmdd, note: curr_C_str },
+        curr_P: {   value: hsio_json[ yyyymmdd + curr_P_str ], date: yyyymmdd, note: curr_P_str },
+        next_C: {   value: hsio_json[ yyyymmdd + next_C_str ], date: yyyymmdd, note: next_C_str },
+        next_P: {   value: hsio_json[ yyyymmdd + next_P_str ], date: yyyymmdd, note: next_P_str }
+      };
+      allOptionFuture.push(dataObj);
+    })
+
+
+    // if (date1st  <=  date) { // if 第一交易日 <= current Date 
+    //   //for prices in the 1st date
+    //   var data_1st = get_hsio_json(date1st, contracts);
+    //   if(get_hsio_json){
+    //     var hsio_date1st_curr_C = {   value: data_1st[ date1st + curr_C_str ], date: date1st, note: curr_C_str } // I: 1st交易日 即月 Call  date1st + CommonData.Month[contract.curr.month] + "-" + contract.curr.year + "-" + strike_curr + "-" + "C"
+    //     var hsio_date1st_curr_P = {   value: data_1st[ date1st + curr_P_str ], date: date1st, note: curr_P_str } // K: 1st交易日 即月 Put   date1st + CommonData.Month[contract.curr.month] + "-" + contract.curr.year + "-" + strike_curr + "-" + "P"
+    //     var hsio_date1st_next_C = {   value: data_1st[ date1st + next_C_str ], date: date1st, note: next_C_str } // M: 1st交易日 下月 Call  date1st + CommonData.Month[contract.next.month] + "-" + contract.next.year + "-" + strike_next + "-" + "C"
+    //     var hsio_date1st_next_P = {   value: data_1st[ date1st + next_P_str ], date: date1st, note: next_P_str } // O: 1st交易日 下月 Put   date1st + CommonData.Month[contract.next.month] + "-" + contract.next.year + "-" + strike_next + "-" + "P"      
+    //   }
+
+    //   //for price after the 1st date
+    //   var dateMov = date; 
+    //   if( dateMov > dateEnd){ dateMov = dateEnd; }     // if current Date > 結算日 , set dateMov = 結算日
+    //   var hsif_dateMov = HSIF.getDate(dateMov);
+    //   var data_dateMov = get_hsio_json(dateMov, contracts);
+
+    //   if(data_dateMov){
+    //      var hsio_dateMov_curr_C = { value: data_dateMov[ dateMov + curr_C_str ], date: dateMov, note: curr_C_str } /* J "結算日 即月 Call"               */
+    //      var hsio_dateMov_curr_P = { value: data_dateMov[ dateMov + curr_P_str ], date: dateMov, note: curr_P_str } /* L "結算日 即月 Put"                */
+    //      var hsio_dateMov_next_C = { value: data_dateMov[ dateMov + next_C_str ], date: dateMov, note: next_C_str } // N: 結算日 下月 Call  date_end   + CommonData.Month[contract.next.month] + "-" + contract.next.year + "-" + strike_next + "-" + "C"
+    //      var hsio_dateMov_next_P = { value: data_dateMov[ dateMov + next_P_str ], date: dateMov, note: next_P_str } // P: 結算日 下月 Put   date_end   + CommonData.Month[contract.next.month] + "-" + contract.next.year + "-" + strike_next + "-" + "P"
+    //   }
+    // }
+
+    returnObj["date"] = date;
+    returnObj["contractMonth"] = contractMonth;
+    returnObj["date1st"] = date1st;
+    returnObj["dateEnd"] = dateEnd;
+
+    returnObj["hsif_date1st"] = hsif_date1st;
+//    returnObj["hsif_dateMov"] = hsif_dateMov;
+    
+    returnObj["strike_curr"] = strike_curr;
+    returnObj["strike_next"] = strike_next;
+
+    returnObj["allOptionFuture"] = allOptionFuture;
+
+    // returnObj["hsio_date1st_curr_C"] = hsio_date1st_curr_C;
+    // returnObj["hsio_date1st_curr_P"] = hsio_date1st_curr_P;
+    // returnObj["hsio_date1st_next_C"] = hsio_date1st_next_C;
+    // returnObj["hsio_date1st_next_P"] = hsio_date1st_next_P;
+    // returnObj["hsio_dateMov_curr_C"] = hsio_dateMov_curr_C;
+    // returnObj["hsio_dateMov_curr_P"] = hsio_dateMov_curr_P;
+    // returnObj["hsio_dateMov_next_C"] = hsio_dateMov_next_C;
+    // returnObj["hsio_dateMov_next_P"] = hsio_dateMov_next_P;
+    
+  } catch (e) { errorLog(e); return "failed" + e.message + ";" + e.fileName + "(" + e.lineNumber + ")"}
+  return returnObj;
+}
