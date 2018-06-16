@@ -62,8 +62,13 @@ function html_control_test(){
 //web request ----------------------------------------------------------------------
 
 function doGet(e) {
+  logError(e);
+  
+  if(e.pathInfo == "3001")
+    return HtmlService.createHtmlOutputFromFile('html_3001');
+  
   if(!e.parameter.a)
-    return HtmlService.createHtmlOutputFromFile('Index');
+    return HtmlService.createHtmlOutputFromFile('html_Index');
   
   if(e.parameter.a == "get"){
     return HtmlService.createHtmlOutput(run_unzip());

@@ -1,0 +1,66 @@
+<html>
+
+<head>
+  <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+</head>
+
+<body>
+  <div id='chart_div' style='width: 100%; height: 500px;'></div>
+</body>
+<script type='text/javascript'>
+var m3001 = {};
+
+function getModel3001Month() {
+  google.script.run.withFailureHandler(function(err) { console.log(err); }).withSuccessHandler(function(response) {
+    // console.log(JSON.stringify(response)); 
+    console.log(response);
+    m3001 = response;
+
+    google.charts.load('current', { 'packages': ['annotationchart'] });
+    google.charts.setOnLoadCallback(generateGoogleGraph);
+    // generateGoogleGraph(m3001);
+
+  }).getModel3001Month();
+}
+
+
+function generateGoogleGraph() {
+
+
+  var data = new google.visualization.DataTable();
+  data.addColumn('date', 'Date');
+  data.addColumn('number', 'curr_C');
+  data.addColumn('number', 'curr_P');
+  data.addColumn('number', 'next_C');
+  data.addColumn('number', 'next_P');
+
+  rowList = [];
+  m3001.allOptionFuture.forEach(function(hsiOF) {
+    // console.log(hsiOF)
+    rowList.push([
+      newDate(hsiOF.date),
+      parseInt(hsiOF.curr_C.value.OQP_CLOSE),
+      parseInt(hsiOF.curr_P.value.OQP_CLOSE),
+      parseInt(hsiOF.next_C.value.OQP_CLOSE),
+      parseInt(hsiOF.next_P.value.OQP_CLOSE)
+    ]);
+  })
+  data.addRows(rowList);
+  var chart = new google.visualization.AnnotationChart(document.getElementById('chart_div'));
+  var options = {
+    displayAnnotations: true
+  };
+  chart.draw(data, options);
+}
+
+function newDate(yymmdd) {
+  if (yymmdd.length == 6)
+    return new Date("20" + yymmdd.substr(0, 2), parseInt(yymmdd.substr(2, 2)) - 1, yymmdd.substr(4, 2));
+  if (yymmdd.length == 8)
+    return new Date(yymmdd.substr(0, 4), parseInt(yymmdd.substr(4, 2)) - 1, yymmdd.substr(6, 2));
+}
+
+getModel3001Month();
+</script>
+
+</html>
