@@ -1,89 +1,102 @@
-<!DOCTYPE html>
-<html>
-<head>
-<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
-<script src="https://code.highcharts.com/stock/highstock.js"></script>
-<script src="https://code.highcharts.com/stock/modules/exporting.js"></script>
-<script src="https://code.highcharts.com/stock/modules/export-data.js"></script>
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/series-label.js"></script>
+<script src="https://code.highcharts.com/modules/exporting.js"></script>
+<script src="https://code.highcharts.com/modules/export-data.js"></script>
+
+<div id="container" style="min-width: 400px; height: 400px; margin: 0 auto"></div>
+
+<script>
+
+Highcharts.chart('container', {
+  chart: {
+    zoomType: 'xy'
+  },
+
+  title: {
+    text: 'Average Monthly Weather Data for Tokyo'
+  },
+
+  xAxis: [{
+    categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+    crosshair: true
+  }],
+
+  yAxis: [{ // Primary yAxis
+    labels: {
+      format: '{value}°C',
+      style: { color: Highcharts.getOptions().colors[2] }
+    },
+    title: {
+      text: 'Temperature',
+      style: { color: Highcharts.getOptions().colors[2] }
+    },
+    opposite: true
+  }, { // Secondary yAxis
+    gridLineWidth: 0,
+    title: {
+      text: 'Rainfall',
+      style: { color: Highcharts.getOptions().colors[0] }
+    },
+    labels: {
+      format: '{value} mm',
+      style: { color: Highcharts.getOptions().colors[0] }
+    }
+  }, { // Tertiary yAxis
+    gridLineWidth: 0,
+    title: {
+      text: 'Sea-Level Pressure',
+      style: { color: Highcharts.getOptions().colors[1] }
+    },
+    labels: {
+      format: '{value} mb',
+      style: { color: Highcharts.getOptions().colors[1] }
+    },
+    opposite: true
+  }],
+
+  tooltip: { shared: true },
+
+  legend: {
+    layout: 'vertical',
+    align: 'left',
+    x: 80,
+    verticalAlign: 'top',
+    y: 55,
+    floating: true,
+    backgroundColor: (Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#FFFFFF'
+  },
+
+  series: [{
+    name: 'Rainfall',
+    type: 'column',
+    yAxis: 1,
+    data: [49.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4],
+    tooltip: { valueSuffix: ' mm' }
+  }, {
+    name: 'Rainfall222',
+    type: 'column',
+    yAxis: 1,
+    data: [419.9, 171.5, 156.4, 189.2, 164.0, 146.0, 155.6, 145.5, 245.4, 294.1, 195.6, 254.4],
+    tooltip: { valueSuffix: ' mm' }
+  }, {
+    name: 'Sea-Level Pressure',
+    type: 'spline',
+    yAxis: 2,
+    data: [1016, 1016, 1015.9, 1015.5, 1012.3, 1009.5, 1009.6, 1010.2, 1013.1, 1016.9, 1018.2, 1016.7],
+    marker: {
+      enabled: false
+    },
+    dashStyle: 'shortdot',
+    tooltip: { valueSuffix: ' mb' }
+  }, {
+    name: 'Temperature',
+    type: 'spline',
+    data: [7.0, 6.9, 9.5, 14.5, 18.2, 21.5, 25.2, 26.5, 23.3, 18.3, 13.9, 9.6],
+    tooltip: { valueSuffix: ' °C' }
+  }]
+
+});
 
 
-<base target="_top">
-</head>
-<body>
-<div id="container" style="height: 400px; min-width: 310px"></div>
 
-</body>
-
-
-<script type="text/javascript">
-	
-	var seriesOptions = [],
-	  seriesCounter = 0,
-	  names = ['MSFT', 'AAPL', 'GOOG'];
-
-	/**
-	 * Create the chart when all data is loaded
-	 * @returns {undefined}
-	 */
-	function createChart() {
-
-	  Highcharts.stockChart('container', {
-
-	    rangeSelector: {
-	      selected: 4
-	    },
-
-	    yAxis: {
-	      labels: {
-	        formatter: function () {
-	          return (this.value > 0 ? ' + ' : '') + this.value + '%';
-	        }
-	      },
-	      plotLines: [{
-	        value: 0,
-	        width: 2,
-	        color: 'silver'
-	      }]
-	    },
-
-	    plotOptions: {
-	      series: {
-	        compare: 'percent',
-	        showInNavigator: true
-	      }
-	    },
-
-	    tooltip: {
-	      pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b> ({point.change}%)<br/>',
-	      valueDecimals: 2,
-	      split: true
-	    },
-
-	    series: seriesOptions
-	  });
-	}
-
-	$.each(names, function (i, name) {
-
-	  $.getJSON('https://www.highcharts.com/samples/data/' + name.toLowerCase() + '-c.json',  function (data) {
-
-	    seriesOptions[i] = {
-	      name: name,
-	      data: data
-	    };
-
-	    // As we're loading the data asynchronously, we don't know what order it will arrive. So
-	    // we keep a counter and create the chart when all the data is loaded.
-	    seriesCounter += 1;
-
-	    if (seriesCounter === names.length) {
-	      createChart();
-	    }
-	  });
-	});
-
-	
 </script>
-</html>
-
-
