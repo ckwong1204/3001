@@ -197,7 +197,7 @@ function getModel3001(inputDate){
 
 
 
-function getModel3001Month ( date ){
+function getModel3001MonthBase ( date ){
   var  returnObj = {};
   try{
     Logger.log("\n\n trigered get Model 3001 Base(" + date+ ") ------------------------------------\n" );
@@ -233,20 +233,20 @@ function getModel3001Month ( date ){
       var dataObj = {
         date : yyyymmdd,
         hsif: HSIF.getDate(yyyymmdd),
-        curr_C: {   value: hsio_json[ yyyymmdd + curr_C_str ], date: yyyymmdd, note: curr_C_str },
-        curr_P: {   value: hsio_json[ yyyymmdd + curr_P_str ], date: yyyymmdd, note: curr_P_str },
-        next_C: {   value: hsio_json[ yyyymmdd + next_C_str ], date: yyyymmdd, note: next_C_str },
-        next_P: {   value: hsio_json[ yyyymmdd + next_P_str ], date: yyyymmdd, note: next_P_str }
+        hsio_curr_C: {   value: hsio_json[ yyyymmdd + curr_C_str ], date: yyyymmdd, note: curr_C_str },
+        hsio_curr_P: {   value: hsio_json[ yyyymmdd + curr_P_str ], date: yyyymmdd, note: curr_P_str },
+        hsio_next_C: {   value: hsio_json[ yyyymmdd + next_C_str ], date: yyyymmdd, note: next_C_str },
+        hsio_next_P: {   value: hsio_json[ yyyymmdd + next_P_str ], date: yyyymmdd, note: next_P_str }
       };
       allOptionFuture.push(dataObj);
-    })
+    });
 
     returnObj["date"] = date;
     returnObj["contractMonth"] = contractMonth;
     returnObj["date1st"] = date1st;
     returnObj["dateEnd"] = dateEnd;
 
-//    returnObj["hsif_date1st"] = hsif_date1st;
+   returnObj["hsif_date1st"] = hsif_date1st;
     
     returnObj["strike_curr"] = strike_curr;
     returnObj["strike_next"] = strike_next;
@@ -255,4 +255,81 @@ function getModel3001Month ( date ){
     
   } catch (e) { errorLog(e); return "failed" + e.message + ";" + e.fileName + "(" + e.lineNumber + ")"}
   return returnObj;
+}
+
+function getModel3001Month(inputDate){
+  var m3001s = getModel3001MonthBase(inputDate);
+  
+  var dateMov = m3001s.date;
+  var contractMonth = m3001s.contractMonth;
+  var date1st = m3001s.date1st;  /* B "1st交易日"                      */
+  var dateEnd = m3001s.dateEnd;  /* C "結算日 d/m/Y"                   */
+  
+  var hsif_date1st_curr_close = parseInt(m3001s.hsif_date1st.curr.day_Settlement_Price); /* E "1st交易日 即月 HSIF:"            */
+  var hsif_date1st_next_close = parseInt(m3001s.hsif_date1st.next.day_Settlement_Price); /* F "1st交易日 下月 HSIF:"            */
+  var strike_curr = m3001s.strike_curr;   // G: 即月 行使價
+  var strike_next = m3001s.strike_next;   // H: 下月 行使價
+  
+  var hsio_date1st_curr_C_Close = parseInt(m3001s.allOptionFuture[0].hsio_curr_C.value.OQP_CLOSE); /* I "1st交易日 即月 Call"             */
+  var hsio_date1st_curr_P_Close = parseInt(m3001s.allOptionFuture[0].hsio_curr_P.value.OQP_CLOSE); /* K "1st交易日 即月 Put"              */
+  var hsio_date1st_next_C_Close = parseInt(m3001s.allOptionFuture[0].hsio_next_C.value.OQP_CLOSE); /* M "1st交易日 下月 Call"             */
+  var hsio_date1st_next_P_Close = parseInt(m3001s.allOptionFuture[0].hsio_next_P.value.OQP_CLOSE); /* O "1st交易日 下月 Put"              */
+
+  m3001s["VI"] = { /* D "IV spread"                     */
+    value:   (hsio_date1st_next_C_Close + hsio_date1st_next_P_Close - Math.abs(hsif_date1st_next_close - strike_next))
+           - (hsio_date1st_curr_C_Close + hsio_date1st_curr_P_Close - Math.abs(hsif_date1st_curr_close - strike_curr)),
+    node: hsio_date1st_next_C_Close + "+" + hsio_date1st_next_P_Close + "-ABS("+ hsif_date1st_next_close +"-"+ strike_next +")-(" +
+          hsio_date1st_curr_C_Close + "+" + hsio_date1st_curr_P_Close + "-ABS("+ hsif_date1st_curr_close +"-"+ strike_curr + "))"
+  };
+  
+  m3001s["VI2"] = { /* D "IV 2 spread"                     */
+    value:   (hsio_date1st_next_C_Close + hsio_date1st_next_P_Close - Math.abs(hsif_date1st_next_close - strike_next))
+           - (hsio_date1st_curr_C_Close + hsio_date1st_curr_P_Close - Math.abs(hsif_date1st_curr_close - strike_curr)),
+    node: hsio_date1st_next_C_Close + "+" + hsio_date1st_next_P_Close + "-ABS("+ hsif_date1st_next_close +"-"+ strike_next +")-(" +
+          hsio_date1st_curr_C_Close + "+" + hsio_date1st_curr_P_Close + "-ABS("+ hsif_date1st_curr_close +"-"+ strike_curr + "))"
+  };
+  
+  m3001s.allOptionFuture.forEach(function(hsiFO_dateMov){
+      var hsif_dateMov_curr_close = parseInt(hsiFO_dateMov.hsif.curr.day_Settlement_Price); /* Q "結算日 即月 HSIF"                */
+      var hsif_dateMov_next_close = parseInt(hsiFO_dateMov.hsif.next.day_Settlement_Price); /* R "結算日 下月 HSIF"                */
+
+      // adjust OQP_CLOSE if the contract end day
+      if (hsiFO_dateMov.date == dateEnd) {
+        hsiFO_dateMov.hsio_curr_C.value.OQP_CLOSE = hsif_dateMov_curr_close > strike_curr ? hsif_dateMov_curr_close - strike_curr : 0; //=IF(INT(Q)>INT(G),Q-G,0)
+        hsiFO_dateMov.hsio_curr_P.value.OQP_CLOSE = hsif_dateMov_curr_close < strike_curr ? strike_curr - hsif_dateMov_curr_close : 0; //=IF(INT(Q)<INT(G),G-Q,0)
+      }
+
+      var hsio_dateMov_curr_C_Close = parseInt(hsiFO_dateMov.hsio_curr_C.value.OQP_CLOSE); /* J "結算日 即月 Call"                */
+      var hsio_dateMov_curr_P_Close = parseInt(hsiFO_dateMov.hsio_curr_P.value.OQP_CLOSE); /* L "結算日 即月 Put"                 */
+      var hsio_dateMov_next_C_Close = parseInt(hsiFO_dateMov.hsio_next_C.value.OQP_CLOSE); /* N "結算日 下月 Call"                */
+      var hsio_dateMov_next_P_Close = parseInt(hsiFO_dateMov.hsio_next_P.value.OQP_CLOSE); /* P "結算日 下月 Put"                 */
+
+      // hsio long current month Call+Put Profile & Lost
+      var hsio_L_curr_CP_pl = { value:    hsio_dateMov_curr_P_Close + hsio_dateMov_curr_C_Close - hsio_date1st_curr_P_Close - hsio_date1st_curr_C_Close,
+                                note:  ""+hsio_dateMov_curr_P_Close +"+"+ hsio_dateMov_curr_C_Close +"-"+ hsio_date1st_curr_P_Close +"-"+ hsio_date1st_curr_C_Close };
+      // hsio long next    month Call+Put Profile & Lost
+      var hsio_L_next_CP_pl = { value:    hsio_dateMov_next_C_Close + hsio_dateMov_next_P_Close - hsio_date1st_next_P_Close - hsio_date1st_next_C_Close,
+                                note:  ""+hsio_dateMov_next_C_Close +"+"+ hsio_dateMov_next_P_Close +"-"+ hsio_date1st_next_P_Close +"-"+ hsio_date1st_next_C_Close };
+
+      hsiFO_dateMov["model"] ={};
+      hsiFO_dateMov["model"]["A"] ={// /* T "A:L即ATM both S下ATM both x2"   */   
+        value: ( hsio_L_curr_CP_pl.value - hsio_L_next_CP_pl.value * 2  ),
+        note:  hsio_L_curr_CP_pl.note + "-("+ hsio_L_next_CP_pl.note +") *2"
+      };
+      hsiFO_dateMov["model"]["B"] ={// /* U "B:S即ATM both L下ATM both x2"   */   
+        value: ( - hsio_L_curr_CP_pl.value + hsio_L_next_CP_pl.value * 2  ),
+        note:  "-("+ hsio_L_curr_CP_pl.note + ")+("+ hsio_L_next_CP_pl.note +") *2"
+      };
+      hsiFO_dateMov["model"]["C"] ={// /* V "C:S即ATM both L下ATM both "*/  
+        value: ( - hsio_L_curr_CP_pl.value + hsio_L_next_CP_pl.value   ),
+        note:  "-("+ hsio_L_curr_CP_pl.note + ")+("+ hsio_L_next_CP_pl.note +") "
+      };
+      hsiFO_dateMov["model"]["D"] ={// /* V "D:L即ATM both S下ATM both "*/  
+        value: (   hsio_L_curr_CP_pl.value - hsio_L_next_CP_pl.value   ),
+        note:  " ("+ hsio_L_curr_CP_pl.note + ")-("+ hsio_L_next_CP_pl.note +") "
+      };
+      
+    }); // end allOptionfuture loop
+
+  return m3001s;
 }
