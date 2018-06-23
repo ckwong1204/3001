@@ -45,7 +45,13 @@
   https://script.google.com/macros/s/AKfycbyzY9alKolkmDbsW7MgtwteILaLOOXsdjwkeUPtyWp6/dev/3001<br>
   https://script.google.com/macros/s/AKfycbyzY9alKolkmDbsW7MgtwteILaLOOXsdjwkeUPtyWp6/exec?a=get2<br>
   https://script.google.com/macros/s/AKfycbyzY9alKolkmDbsW7MgtwteILaLOOXsdjwkeUPtyWp6/dev?a=get&callback=callback<br>
-
+  
+  <br><textarea rows="4" style="width:  calc(100vw - 20px);">
+  var m3001s = {};
+  google.script.run.withFailureHandler(function(err) {console.log(err);}).withSuccessHandler(function(response) {
+      console.log(JSON.stringify(response)); console.log(response); m3001s=response; 
+  }).getModel3001Month(); 
+  </textarea>
   <br><textarea rows="4" style="width:  calc(100vw - 20px);">
   var m3001 = {};
   google.script.run.withFailureHandler(function(err) {console.log(err);}).withSuccessHandler(function(response) {
