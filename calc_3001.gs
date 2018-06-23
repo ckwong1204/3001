@@ -77,8 +77,9 @@ function getModel3001Base ( date ){
 }
 
 function getModel3001(inputDate){
-  var m3001 = getModel3001Base(inputDate);
-  
+  var cacheKey = "getModel3001Base"+ inputDate;
+  var m3001 = getGoogleCache(cacheKey, getModel3001Base, inputDate);
+   
   var dateMov = m3001.date;
   var contractMonth = m3001.contractMonth;
   var date1st = m3001.date1st;  /* B "1st交易日"                      */
@@ -258,8 +259,10 @@ function getModel3001MonthBase ( date ){
 }
 
 function getModel3001Month(inputDate){
-  var m3001s = getModel3001MonthBase(inputDate);
-  
+  logError("getModel3001Month", "start")
+  var cacheKey = "getModel3001MonthBase"+ inputDate;
+  var m3001s = getGoogleCache(cacheKey, getModel3001MonthBase, inputDate);
+
   var dateMov = m3001s.date;
   var contractMonth = m3001s.contractMonth;
   var date1st = m3001s.date1st;  /* B "1st交易日"                      */
@@ -331,5 +334,6 @@ function getModel3001Month(inputDate){
       
     }); // end allOptionfuture loop
 
+  logError("getModel3001Month", "end")
   return m3001s;
 }

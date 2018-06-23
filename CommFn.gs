@@ -1,10 +1,34 @@
-var cacheGetSheetByName ={};
+var CommFnCache ={};
 function getSheetByName(sheetName){
-  var a = cacheGetSheetByName[sheetName];
-  if(!cacheGetSheetByName[sheetName]){
-    cacheGetSheetByName[sheetName] = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(sheetName);
+  if(!CommFnCache[sheetName]){
+    CommFnCache[sheetName] = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(sheetName);
   }
-  return cacheGetSheetByName[sheetName];
+  return CommFnCache[sheetName];
+}
+
+function putLocalCache(cacheKey, cacheObj){
+  if(!CommFnCache[cacheKey]){
+    CommFnCache[cacheKey] = cacheObj;
+  }
+  return CommFnCache[cacheKey];
+}
+
+function getLocalCache(cacheKey){
+  return CommFnCache[cacheKey];
+}
+
+function getGoogleCache(cacheKey, functionToBeCall, arg1, arg2, arg3, arg4){
+  
+  var cached = CacheService.getDocumentCache().get(cacheKey) ;
+  if(cached == null){
+    try{
+      var cached = functionToBeCall(arg1, arg2, arg3, arg4);
+      CacheService.getDocumentCache().put(cacheKey, JSON.stringify(cached), 21600);
+    }catch(e){ console.log(e); logError(e); }
+  }
+  else{cached = JSON.parse(cached)}
+
+  return cached;
 }
 
 function getDateNowStr(){
