@@ -22,3 +22,22 @@ function measuringExecutionTime() {
    }
    console.timeEnd(label);      // Stops the timer, logs execution duration.
  }
+
+
+function test2(date){
+  Logger.log("123123");
+  var cacheKey = "getModel3001MonthBase"+ date;
+  
+  var cached = CacheService.getDocumentCache().get(cacheKey) ;
+  
+  if(cached == null){
+    try{
+      var cached = getModel3001MonthBase(date);
+      CacheService.getDocumentCache().put(cacheKey, cached);
+    }catch(e){ 
+      console.log(e); 
+      logError(e)
+    }
+  }
+  return cached;
+}

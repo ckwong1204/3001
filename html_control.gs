@@ -70,6 +70,9 @@ function doGet(e) {
   if(e.pathInfo == "highchats")
     return HtmlService.createHtmlOutputFromFile('html_highchats');
   
+  if(e.pathInfo == "stockchats")
+    return HtmlService.createHtmlOutputFromFile('html_stockchats');
+  
   if(!e.parameter.a)
     return HtmlService.createHtmlOutputFromFile('html_Index');
   
