@@ -165,7 +165,8 @@ function getModel3001(inputDate){
     +changeStr(m3001.hsio_date1st_curr_P.note, m3001.hsio_date1st_curr_P.value.OQP_CLOSE,  m3001.hsio_dateMov_curr_P.value.OQP_CLOSE)
     +changeStr(m3001.hsio_date1st_next_C.note, m3001.hsio_date1st_next_C.value.OQP_CLOSE,  m3001.hsio_dateMov_next_C.value.OQP_CLOSE)
     +changeStr(m3001.hsio_date1st_next_P.note, m3001.hsio_date1st_next_P.value.OQP_CLOSE,  m3001.hsio_dateMov_next_P.value.OQP_CLOSE)
-    +"goo.gl/D5BJv2 "
+    +"excel: goo.gl/D5BJv2 \n"
+    +"charts: goo.gl/L7McPp"
     ;
 
   return m3001;

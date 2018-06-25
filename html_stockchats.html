@@ -55,8 +55,7 @@ function generateChart(){
   // create the chart
   chart = Highcharts.stockChart('container', {
     rangeSelector: {  selected: 2},
-    title: {  text: 'HSIF Historical'},
-    subtitle: {  text: 'With SMA and HSIF Volume by Price technical indicators'},
+    title: {  text: m3001s.contractMonth + ' 3001 Model Profit & Lost'},
 
     yAxis: [
     { startOnTick: false,
@@ -75,8 +74,8 @@ function generateChart(){
       lineWidth: 2
     }, { // Secondary yAxis
       gridLineWidth: 1, id: 'yAxis3001', height: '90%', opposite: false,
-      title: {  style: { color: Highcharts.getOptions().colors[1] }, text: '3001 P&L' },
-      labels: { style: { color: Highcharts.getOptions().colors[1] }, format: '{value}' }
+      title: { style: { color: Highcharts.getOptions().colors[1] }, text: '3001 P&L' },
+      labels:{ style: { color: Highcharts.getOptions().colors[1] }, format: '{value}' }
     }],
 
     tooltip: { shared: true },
@@ -86,7 +85,7 @@ function generateChart(){
 //     },
 
     series: [
-      { type: 'candlestick',  name: 'HSIF',        id: 'hsif', zIndex: 2,   data: hsif_curr_ohlc }, 
+      { type: 'candlestick',  name: 'HSIF',        id: 'hsif', zIndex: 2,   data: hsif_curr_ohlc, color: Highcharts.getOptions().colors[5] }, 
       { type: 'column',       name: 'HSIF Volume', id: 'hsif_curr_volume',  data: hsif_curr_volume, yAxis: 1, color: Highcharts.getOptions().colors[4] }, 
 //       { type: 'vbp', linkedTo: 'hsif', 
 //         params: {  volumeSeriesID: 'hsif_curr_volume' },
@@ -94,16 +93,30 @@ function generateChart(){
 //         zoneLines: { enabled: false} 
 //       }, 
 //       { type: 'sma', linkedTo: 'hsif', zIndex: 1, marker: {   enabled: false } }, 
-        { name: '3001 A', type: 'spline', yAxis: 'yAxis3001', zIndex: 3, data: model_A_value_List, color: Highcharts.getOptions().colors[1]}, 
-        { name: '3001 B', type: 'spline', yAxis: 'yAxis3001', zIndex: 3, data: model_B_value_List, color: Highcharts.getOptions().colors[1]}, 
-        { name: '3001 C', type: 'spline', yAxis: 'yAxis3001', zIndex: 3, data: model_C_value_List, color: Highcharts.getOptions().colors[2]}, 
-        { name: '3001 D', type: 'spline', yAxis: 'yAxis3001', zIndex: 3, data: model_D_value_List, color: Highcharts.getOptions().colors[2]}
+      { name: 'A L即S下x2', type: 'spline', yAxis: 'yAxis3001', zIndex: 3, data: model_A_value_List, color: Highcharts.getOptions().colors[0]}, 
+      { name: 'B S即L下x2', type: 'spline', yAxis: 'yAxis3001', zIndex: 3, data: model_B_value_List, color: Highcharts.getOptions().colors[2]}, 
+      { name: 'C S即L下'  , type: 'spline', yAxis: 'yAxis3001', zIndex: 3, data: model_C_value_List, color: Highcharts.getOptions().colors[3]},
+      { name: 'D L即S下'  , type: 'spline', yAxis: 'yAxis3001', zIndex: 3, data: model_D_value_List, color: Highcharts.getOptions().colors[1]},
     ],
     navigator: { enabled: false },
-    scrollbar: { enabled: false }
+    scrollbar: { enabled: false },
     
-    
+    legend: {
+        enabled: true,
+        align: 'left',
+        layout: 'vertical',
+        verticalAlign: 'top',
+        y: 100,
+		x: 80,
+		floating: true
+    },
+    rangeSelector: {
+      enabled: false
+    }
   });
+  chart.series[3].hide();
+  chart.series[4].hide();
+  
   resizeChart();
     //add listener for resize
     window.addEventListener('resize', function(event){
