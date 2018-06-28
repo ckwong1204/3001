@@ -62,16 +62,19 @@ function html_control_test(){
 //web request ----------------------------------------------------------------------
 
 function doGet(e) {
-  logError(e);
+  logError(e,e.parameter.stockchats == true, e.parameter.stockchats =="" );
   
-  if(e.pathInfo == "3001")
+  if(e.pathInfo == "m3001" || e.parameter.m3001 == "")
     return HtmlService.createHtmlOutputFromFile('html_3001');
   
-  if(e.pathInfo == "highchats")
+  if(e.pathInfo == "highchats" || e.parameter.highchats == "")
     return HtmlService.createHtmlOutputFromFile('html_highchats');
   
-  if(e.pathInfo == "stockchats")
-    return HtmlService.createHtmlOutputFromFile('html_stockchats');
+  if(e.pathInfo == "highstock" || e.parameter.highstock == "")
+    return HtmlService.createHtmlOutputFromFile('html_highstock');
+  
+  if(e.pathInfo == "googlechats" || e.parameter.googlechats == "")
+    return googleChart();
   
   if(!e.parameter.a)
     return HtmlService.createHtmlOutputFromFile('html_Index');
@@ -118,4 +121,6 @@ function doGet(e) {
 function getEmail() {
   return Session.getActiveUser().getEmail();
 }
+
+
 
