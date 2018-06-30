@@ -78,7 +78,7 @@ function getModel3001Base ( date ){
 
 function getModel3001(inputDate){
   var cacheKey = "getModel3001Base"+ inputDate;
-  var m3001 = getGoogleCache(cacheKey, getModel3001Base, inputDate);
+  var m3001 = StaticCache.getStaticCacheOrCallFunctionIfNull(cacheKey, getModel3001Base, inputDate);
    
   var dateMov = m3001.date;
   var contractMonth = m3001.contractMonth;
@@ -262,7 +262,7 @@ function getModel3001MonthBase ( date ){
 function getModel3001Month(inputDate){
   logError("getModel3001Month", "start")
   var cacheKey = "getModel3001MonthBase"+ inputDate;
-  var m3001s = getGoogleCache(cacheKey, getModel3001MonthBase, inputDate);
+  var m3001s = StaticCache.getStaticCacheOrCallFunctionIfNull(cacheKey, getModel3001MonthBase, inputDate);
 
   var dateMov = m3001s.date;
   var contractMonth = m3001s.contractMonth;
