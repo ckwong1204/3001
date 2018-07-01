@@ -175,7 +175,7 @@ function loadContractMonthInfoList(){
       .filter(item => item.date1st != "")  // filter date1st == ""
       .sort((a,b) => - parseInt(a.date1st) + parseInt(b.date1st) )  //desc order
       .forEach(function(item){ 
-        $('#contractMonthSelectBox').append("<option value='"+item.date1st+"'>"+item.contractMonth+": "+ item.date1st +"</option>") 
+        $('#contractMonthSelectBox').append("<option value='"+item.date1st+"'>"+item.contractMonth+": "+ item.date1st +" to "+item.dateEnd+"</option>") 
     });
   }).getContractMonthInfoList() 
 }
