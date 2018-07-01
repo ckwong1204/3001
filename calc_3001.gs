@@ -259,10 +259,20 @@ function getModel3001MonthBase ( date ){
   return returnObj;
 }
 
-function getModel3001Month(inputDate){
-  logError("getModel3001Month", "start")
-  var cacheKey = "getModel3001MonthBase"+ inputDate;
-  var m3001s = StaticCache.getStaticCacheOrCallFunctionIfNull(cacheKey, getModel3001MonthBase, inputDate);
+function test_getModel3001Month(){  getModel3001Month_forceUpdateStaticCache() }
+function getModel3001Month_forceUpdateStaticCache(date){
+  getModel3001Month(date,true);
+}
+function getModel3001Month(date,isForceUpdateStaticCache){
+  logError("getModel3001Month", "start");
+  
+  if(!date){ var date = getLastTransactionDate(); }
+  var contractMonthInfo = findContractMonthInfoByDate(date);
+  var contractMonth = contractMonthInfo.contractMonth;
+  var cacheKey = "getModel3001MonthBase"+ contractMonthInfo.contractMonth;
+  var m3001s = isForceUpdateStaticCache ?
+      StaticCache.putCache(cacheKey, getModel3001MonthBase(date)) :
+      StaticCache.getStaticCacheOrCallFunctionIfNull(cacheKey, getModel3001MonthBase, date);
 
   var dateMov = m3001s.date;
   var contractMonth = m3001s.contractMonth;

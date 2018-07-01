@@ -5,16 +5,39 @@
 <script src="https://code.highcharts.com/stock/indicators/indicators.js"></script>
 <script src="https://code.highcharts.com/stock/indicators/volume-by-price.js"></script>
 
+<button type="button" onclick="resizeChart()"> Resize Chart</button>
+
+<select id="contractMonthSelectBox" onchange="contractMonthSelectBox_onselect()">
+  <option value="" selected>Current Month</option>
+</select>
 
 <div id="container" style="width: 100%; height: 100%; margin: 0 auto"></div>
 
 <script>
 
 var m3001s = {};
-google.script.run.withFailureHandler(function(err) {console.log(err);}).withSuccessHandler(function(response) {
-    console.log(JSON.stringify(response)); console.log(response); m3001s=response; 
-    generateChart();
-}).getModel3001Month(); 
+var contractMonthInfoList ={};
+var CommFnCache ={};
+
+load3001();
+loadContractMonthInfoList();
+
+
+function load3001(date){
+  var key = "getModel3001Month" + date;
+  var cached = getLocalCache(key);
+  if(cached){
+     m3001s = cached;
+     generateChart();
+  }
+  else{
+    google.script.run.withFailureHandler(function(err) {console.log(err);}).withSuccessHandler(function(response) {
+      console.log(response); m3001s=response; 
+      putLocalCache(key,response);
+      generateChart();
+    }).getModel3001Month(date);
+  }
+}
 
 var chart = null;
 function generateChart(){
@@ -127,7 +150,6 @@ function generateChart(){
     //https://gist.github.com/philfreo/0a4d899de4257e08a000
 }
 
-
 function resizeChart(){
   console.log("resize", document.body.clientWidth, document.body.clientHeight)
   chart.setSize(document.documentElement.clientWidth -20 ,document.documentElement.clientHeight - 40 , true)
@@ -138,6 +160,37 @@ function newDate(yymmdd) {
     return new Date("20" + yymmdd.substr(0, 2), parseInt(yymmdd.substr(2, 2)) - 1, yymmdd.substr(4, 2));
   if (yymmdd.length == 8)
     return new Date(yymmdd.substr(0, 4), parseInt(yymmdd.substr(4, 2)) - 1, yymmdd.substr(6, 2));
+}
+
+/////// Select box
+function contractMonthSelectBox_onselect(){
+  console.log("change",$('#contractMonthSelectBox').val())
+  load3001($('#contractMonthSelectBox').val())
+}
+
+function loadContractMonthInfoList(){
+  google.script.run.withFailureHandler(function(err) {console.log(err);}).withSuccessHandler(function(response) {
+    console.log(response); contractMonthInfoList=response; 
+    contractMonthInfoList
+      .filter(item => item.date1st != "")  // filter date1st == ""
+      .sort((a,b) => - parseInt(a.date1st) + parseInt(b.date1st) )  //desc order
+      .forEach(function(item){ 
+        $('#contractMonthSelectBox').append("<option value='"+item.date1st+"'>"+item.contractMonth+": "+ item.date1st +"</option>") 
+    });
+  }).getContractMonthInfoList() 
+}
+
+////// Cache
+
+function putLocalCache(cacheKey, cacheObj){
+  if(!CommFnCache[cacheKey]){
+    CommFnCache[cacheKey] = cacheObj;
+  }
+  return CommFnCache[cacheKey];
+}
+
+function getLocalCache(cacheKey){
+  return CommFnCache[cacheKey];
 }
 
 </script>

@@ -61,6 +61,7 @@ function run_downloadMarketData() {
       DailyMartketReport_triger(date); 
       DailyReport_Trigger();
       dailyTelegramUpdate();
+      getModel3001Month_forceUpdateStaticCache(date);
     }    
   } catch (e) { 
     errorLog(
