@@ -76,12 +76,12 @@ function updateSheet3001Row ( row, date){
     var hsio_dateMov_next_C_Close = parseInt(m3001.hsio_dateMov_next_C.value.OQP_CLOSE); /* N "結算日 下月 Call"                */
     var hsio_dateMov_next_P_Close = parseInt(m3001.hsio_dateMov_next_P.value.OQP_CLOSE); /* P "結算日 下月 Put"                 */
     
-    var vi3001 = parseInt(m3001.VI.value); /* D "IV spread"                  */
+    var vi3001 = parseInt(m3001.IV.value); /* D "IV spread"                  */
     var modelAProfit = parseInt(m3001.model.A.value);
     var modelBProfit = parseInt(m3001.model.B.value);
     var modelCProfit = parseInt(m3001.model.C.value);
 
-    var vi30012 = parseInt(m3001.VI2);
+    var vi30012 = parseInt(m3001.IV2);
     var modelD = m3001.D;
 
     sheet.getRange('A'+row).setValue(contractMonth); /* A Contract Month   */

@@ -78,7 +78,8 @@ function getModel3001Base ( date ){
 
 function getModel3001(inputDate){
   var cacheKey = "getModel3001Base"+ inputDate;
-  var m3001 = StaticCache.getStaticCacheOrCallFunctionIfNull(cacheKey, getModel3001Base, inputDate);
+
+  var m3001 = getModel3001Base(inputDate);
    
   var dateMov = m3001.date;
   var contractMonth = m3001.contractMonth;
@@ -110,14 +111,14 @@ function getModel3001(inputDate){
 
   
   
-  m3001["VI"] = { /* D "IV spread"                     */
+  m3001["IV"] = { /* D "IV spread"                     */
     value:   (hsio_date1st_next_C_Close + hsio_date1st_next_P_Close - Math.abs(hsif_date1st_next_close - strike_next))
            - (hsio_date1st_curr_C_Close + hsio_date1st_curr_P_Close - Math.abs(hsif_date1st_curr_close - strike_curr)),
     node: hsio_date1st_next_C_Close + "+" + hsio_date1st_next_P_Close + "-ABS("+ hsif_date1st_next_close +"-"+ strike_next +")-(" +
           hsio_date1st_curr_C_Close + "+" + hsio_date1st_curr_P_Close + "-ABS("+ hsif_date1st_curr_close +"-"+ strike_curr + "))"
   };
   
-  m3001["VI2"] = { /* D "IV 2 spread"                     */
+  m3001["IV2"] = { /* D "IV 2 spread"                     */
     value:   (hsio_date1st_next_C_Close + hsio_date1st_next_P_Close - Math.abs(hsif_date1st_next_close - strike_next))
            - (hsio_date1st_curr_C_Close + hsio_date1st_curr_P_Close - Math.abs(hsif_date1st_curr_close - strike_curr)),
     node: hsio_date1st_next_C_Close + "+" + hsio_date1st_next_P_Close + "-ABS("+ hsif_date1st_next_close +"-"+ strike_next +")-(" +
@@ -151,7 +152,7 @@ function getModel3001(inputDate){
 
   m3001["summary"] = 
     "" + dateMov + " 3001 Profit n Loss: " +"\n"
-    +"3001 IV: " + m3001.VI.value + "\n"
+    +"3001 IV: " + m3001.IV.value + "\n"
     +"A  (IV< 400) : " + m3001.model.A.value +"\n"
     +"B  (IV< 580) : " + m3001.model.B.value +"\n"
     +"C  (IV>=580) : " + m3001.model.C.value +"\n"
@@ -289,14 +290,14 @@ function getModel3001Month(date,isForceUpdateStaticCache){
   var hsio_date1st_next_C_Close = parseInt(m3001s.allOptionFuture[0].hsio_next_C.value.OQP_CLOSE); /* M "1st交易日 下月 Call"             */
   var hsio_date1st_next_P_Close = parseInt(m3001s.allOptionFuture[0].hsio_next_P.value.OQP_CLOSE); /* O "1st交易日 下月 Put"              */
 
-  m3001s["VI"] = { /* D "IV spread"                     */
+  m3001s["IV"] = { /* D "IV spread"                     */
     value:   (hsio_date1st_next_C_Close + hsio_date1st_next_P_Close - Math.abs(hsif_date1st_next_close - strike_next))
            - (hsio_date1st_curr_C_Close + hsio_date1st_curr_P_Close - Math.abs(hsif_date1st_curr_close - strike_curr)),
     node: hsio_date1st_next_C_Close + "+" + hsio_date1st_next_P_Close + "-ABS("+ hsif_date1st_next_close +"-"+ strike_next +")-(" +
           hsio_date1st_curr_C_Close + "+" + hsio_date1st_curr_P_Close + "-ABS("+ hsif_date1st_curr_close +"-"+ strike_curr + "))"
   };
   
-  m3001s["VI2"] = { /* D "IV 2 spread"                     */
+  m3001s["IV2"] = { /* D "IV 2 spread"                     */
     value:   (hsio_date1st_next_C_Close + hsio_date1st_next_P_Close - Math.abs(hsif_date1st_next_close - strike_next))
            - (hsio_date1st_curr_C_Close + hsio_date1st_curr_P_Close - Math.abs(hsif_date1st_curr_close - strike_curr)),
     node: hsio_date1st_next_C_Close + "+" + hsio_date1st_next_P_Close + "-ABS("+ hsif_date1st_next_close +"-"+ strike_next +")-(" +

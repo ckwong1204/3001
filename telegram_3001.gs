@@ -1,8 +1,11 @@
-
-
 function dailyTelegramUpdate(){
   var m3001 = getModel3001();
   textTelegramText(m3001.summary, "group");
+}
+
+function dailyTelegramUpdate_test(){
+  var m3001 = getModel3001();
+  textTelegramText(m3001.summary, "test");
 }
 
 function dailyTelegramUpdate_test_1stday(){

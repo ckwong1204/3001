@@ -78,7 +78,7 @@ function generateChart(){
   // create the chart
   chart = Highcharts.stockChart('container', {
     rangeSelector: {  selected: 2},
-    title: {  text: m3001s.contractMonth + ' 3001 Model Profit & Lost'},
+    title: {  text: m3001s.contractMonth + ' 3001 Model P&L, IV: ' + m3001s.IV.value },
 
     yAxis: [
     { startOnTick: false,
