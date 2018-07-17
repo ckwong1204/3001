@@ -49,6 +49,10 @@ function generateChart(){
     model_C_value_List = [],
     model_D_value_List = [],
     date_List = [],
+    hsio_curr_P_List = [], 
+    hsio_next_C_List = [], 
+    hsio_curr_C_List = [], 
+    hsio_next_P_List = [],
     groupingUnits = [
       // unit name, allowed multiples
       ['week', [1] ], 
@@ -72,6 +76,10 @@ function generateChart(){
     model_B_value_List.push( [newDate(a.date).getTime(), a.model.B.value] );
     model_C_value_List.push( [newDate(a.date).getTime(), a.model.C.value] );
     model_D_value_List.push( [newDate(a.date).getTime(), a.model.D.value] );
+    hsio_curr_C_List  .push( [newDate(a.date).getTime(), parseInt(a.hsio_curr_C.value.OQP_CLOSE)] );
+    hsio_next_C_List  .push( [newDate(a.date).getTime(), parseInt(a.hsio_next_C.value.OQP_CLOSE)] );
+    hsio_curr_P_List  .push( [newDate(a.date).getTime(), parseInt(a.hsio_curr_P.value.OQP_CLOSE)] );
+    hsio_next_P_List  .push( [newDate(a.date).getTime(), parseInt(a.hsio_next_P.value.OQP_CLOSE)] );
     date_List.push(a.date);
   });
 
@@ -108,7 +116,7 @@ function generateChart(){
 //     },
 
     series: [
-      { type: 'candlestick',  name: 'HSIF',        id: 'hsif', zIndex: 2,   data: hsif_curr_ohlc, color: Highcharts.getOptions().colors[5] }, 
+      { type: 'candlestick',  name: 'HSIF 即月',    id: 'hsif', zIndex: 2,   data: hsif_curr_ohlc, color: Highcharts.getOptions().colors[5] }, 
       { type: 'column',       name: 'HSIF Volume', id: 'hsif_curr_volume',  data: hsif_curr_volume, yAxis: 1, color: Highcharts.getOptions().colors[4] }, 
 //       { type: 'vbp', linkedTo: 'hsif', 
 //         params: {  volumeSeriesID: 'hsif_curr_volume' },
@@ -116,10 +124,14 @@ function generateChart(){
 //         zoneLines: { enabled: false} 
 //       }, 
 //       { type: 'sma', linkedTo: 'hsif', zIndex: 1, marker: {   enabled: false } }, 
-      { name: 'A L即S下x2', type: 'spline', yAxis: 'yAxis3001', zIndex: 3, data: model_A_value_List, color: Highcharts.getOptions().colors[0]}, 
-      { name: 'B S即L下x2', type: 'spline', yAxis: 'yAxis3001', zIndex: 3, data: model_B_value_List, color: Highcharts.getOptions().colors[2]}, 
+      { name: 'A L即S下x2', type: 'spline', yAxis: 'yAxis3001', zIndex: 3, data: model_A_value_List, color: Highcharts.getOptions().colors[0]},
+      { name: 'B S即L下x2', type: 'spline', yAxis: 'yAxis3001', zIndex: 3, data: model_B_value_List, color: Highcharts.getOptions().colors[2]},
       { name: 'C S即L下'  , type: 'spline', yAxis: 'yAxis3001', zIndex: 3, data: model_C_value_List, color: Highcharts.getOptions().colors[3]},
       { name: 'D L即S下'  , type: 'spline', yAxis: 'yAxis3001', zIndex: 3, data: model_D_value_List, color: Highcharts.getOptions().colors[1]},
+      { name: 'HSIO'+m3001s.allOptionFuture[0].hsio_curr_C.note, type: 'spline', yAxis: 'yAxis3001', zIndex: 4, data: hsio_curr_C_List, color: Highcharts.getOptions().colors[8]},
+      { name: 'HSIO'+m3001s.allOptionFuture[0].hsio_curr_P.note, type: 'spline', yAxis: 'yAxis3001', zIndex: 4, data: hsio_curr_P_List, color: Highcharts.getOptions().colors[6]}, 
+      { name: 'HSIO'+m3001s.allOptionFuture[0].hsio_next_C.note, type: 'spline', yAxis: 'yAxis3001', zIndex: 4, data: hsio_next_C_List, color: Highcharts.getOptions().colors[7]}, 
+      { name: 'HSIO'+m3001s.allOptionFuture[0].hsio_next_P.note, type: 'spline', yAxis: 'yAxis3001', zIndex: 4, data: hsio_next_P_List, color: Highcharts.getOptions().colors[9]},
     ],
     navigator: { enabled: false },
     scrollbar: { enabled: false },
@@ -139,6 +151,11 @@ function generateChart(){
   });
   chart.series[3].hide();
   chart.series[4].hide();
+
+  chart.series[6].hide();
+  chart.series[7].hide();
+  chart.series[8].hide();
+  chart.series[9].hide();
   
   resizeChart();
     //add listener for resize
