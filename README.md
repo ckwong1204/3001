@@ -11,7 +11,7 @@ Feature:
 
 ![SpreadSheet](doc/spreadsheet.PNG)
 
-5. Historial option query in [link](https://script.google.com/macros/s/AKfycbxKcVkaCnsGDO_0CB0uw8P_qMOqlsITNRTZeK0wHWoJRrC7NOWG/exec). This is the sample of search HSI option data on 03 Mar 2019, current Month contract, for Strike Price from 27000 to 2800
+5. Historial option query in [link](https://script.google.com/macros/s/AKfycbxKcVkaCnsGDO_0CB0uw8P_qMOqlsITNRTZeK0wHWoJRrC7NOWG/exec). This is the sample of search HSI option data on 03 Mar 2019, current Month contract, for Strike Price from 27000 to 29000
 
 ![HSIO](doc/hsio.PNG)
 
